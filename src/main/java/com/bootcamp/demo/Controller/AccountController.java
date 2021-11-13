@@ -1,6 +1,7 @@
 package com.bootcamp.demo.Controller;
 
-import Exceptions.AccountControllerException;
+import Exceptions.ControllerException;
+import Exceptions.ServiceException;
 import com.bootcamp.demo.business.iService;
 import com.bootcamp.demo.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,11 @@ public class AccountController {
     }
 
     @PostMapping("/addAccount")
-    void add(@RequestBody Account account) throws AccountControllerException {
+    void add(@RequestBody Account account) throws ControllerException {
         try {
             service.add(account);
-        }catch(ExecutionException | InterruptedException exception){
-            throw new AccountControllerException(exception.getMessage());
+        }catch(ServiceException exception){
+            throw new ControllerException(exception.getMessage());
         }
     }
 }

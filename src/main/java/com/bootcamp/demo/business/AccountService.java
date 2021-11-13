@@ -1,25 +1,35 @@
 package com.bootcamp.demo.business;
 
+import Exceptions.EncryptionException;
+import Exceptions.ServiceException;
+import com.bootcamp.demo.data_access.iRepository;
 import com.bootcamp.demo.model.Account;
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.WriteResult;
-import com.google.firebase.cloud.FirestoreClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
 import java.util.concurrent.ExecutionException;
 
 
 @Service
 public class AccountService implements iService<Account>{
+    iRepository<Account> repository;
+    iEncryptor encryptor;
 
-    public String add(final Account account) throws ExecutionException, InterruptedException {
-        //todo add encryption, validate
-        Firestore db = FirestoreClient.getFirestore();
-        DocumentReference docRef = db.collection("accounts").document();
-        ApiFuture<WriteResult> writeResult = docRef.set(account);
-        return writeResult.get().getUpdateTime().toString();
+    @Autowired
+    public AccountService(iRepository<Account> repository, iEncryptor encryptor) {
+        this.repository = repository;
+        this.encryptor = encryptor;
+    }
+
+    public String add(final Account account) throws ServiceException {
+        try {
+            account.setPassword(encryptor.encryptSHA256(account.getPassword()));
+            System.out.println(account.getPassword());
+            return repository.add(account);
+        }
+        catch(EncryptionException | ExecutionException | InterruptedException  exception){
+            throw new ServiceException(exception.getMessage());
+        }
     }
 
 }
