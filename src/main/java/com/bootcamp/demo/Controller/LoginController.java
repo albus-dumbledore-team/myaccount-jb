@@ -1,4 +1,4 @@
-package com.bootcamp.demo;
+package com.bootcamp.demo.Controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
