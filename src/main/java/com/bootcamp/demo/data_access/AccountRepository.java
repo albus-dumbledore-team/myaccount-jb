@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 public class AccountRepository implements Repo<Account> {
     public String add(final Account account) throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
-        DocumentReference docRef = db.collection("accounts").document();
+        DocumentReference docRef = db.collection("accounts").document(account.getUsername());
         ApiFuture<WriteResult> writeResult = docRef.set(account);
         return writeResult.get().getUpdateTime().toString();
     }
