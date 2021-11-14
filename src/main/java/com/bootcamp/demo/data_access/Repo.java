@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import java.util.concurrent.ExecutionException;
 
 
-public interface iRepository<T> {
+public interface Repo<T> {
     public String add(T elem) throws ExecutionException, InterruptedException;
 }
