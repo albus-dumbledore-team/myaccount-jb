@@ -5,9 +5,7 @@ import Exceptions.ServiceException;
 import com.bootcamp.demo.business.Service;
 import com.bootcamp.demo.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AccountController {
@@ -22,7 +20,17 @@ public class AccountController {
     void add(@RequestBody Account account) throws ControllerException {
         try {
             service.add(account);
-        }catch(ServiceException exception){
+        } catch (ServiceException exception) {
+            throw new ControllerException(exception.getMessage());
+        }
+    }
+
+    @DeleteMapping("/deleteAccount/{username}")
+    public void delete(@PathVariable String username) throws ControllerException {
+        try {
+            service.delete(username);
+            System.out.println("[DELETE]: Account with username '" + username + "' was deleted successfully.");
+        } catch (ServiceException exception) {
             throw new ControllerException(exception.getMessage());
         }
     }

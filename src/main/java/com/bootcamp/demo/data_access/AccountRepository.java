@@ -2,9 +2,7 @@ package com.bootcamp.demo.data_access;
 
 import com.bootcamp.demo.model.Account;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.WriteResult;
+import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Repository;
 
@@ -17,5 +15,23 @@ public class AccountRepository implements Repo<Account> {
         DocumentReference docRef = db.collection("accounts").document(account.getUsername());
         ApiFuture<WriteResult> writeResult = docRef.set(account);
         return writeResult.get().getUpdateTime().toString();
+    }
+
+    @Override
+    public boolean delete(String username) {
+        if (username == null) {
+            throw new IllegalArgumentException("Username must not be null.");
+        }
+
+        Firestore db = FirestoreClient.getFirestore();
+        CollectionReference collectionReference = db.collection("accounts");
+        DocumentReference documentReference = collectionReference.document(username);
+
+        if (documentReference != null) {
+            documentReference.delete();
+            return true;
+        }
+
+        return false;
     }
 }

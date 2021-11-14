@@ -7,4 +7,5 @@ import java.util.concurrent.ExecutionException;
 
 public interface Service<T> {
     String add(T elem) throws ServiceException;
+    boolean delete(String username) throws ServiceException;
 }

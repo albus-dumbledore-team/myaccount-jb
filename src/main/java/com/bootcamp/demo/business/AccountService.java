@@ -1,6 +1,5 @@
 package com.bootcamp.demo.business;
 
-import Exceptions.EncryptionException;
 import Exceptions.ServiceException;
 import com.bootcamp.demo.data_access.Repo;
 import com.bootcamp.demo.model.Account;
@@ -31,10 +30,13 @@ public class AccountService implements Service<Account> {
             account.setPassword(encryptor.encryptSHA256(account.getPassword()));
             System.out.println(account.getPassword());
             return repository.add(account);
-        }
-        catch(ExecutionException | InterruptedException  exception){
+        } catch (ExecutionException | InterruptedException exception) {
             throw new ServiceException(exception.getMessage());
         }
     }
 
+    @Override
+    public boolean delete(String username) {
+        return repository.delete(username);
+    }
 }
