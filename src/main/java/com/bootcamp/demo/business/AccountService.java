@@ -12,21 +12,16 @@ import java.util.concurrent.ExecutionException;
 @org.springframework.stereotype.Service
 public class AccountService implements Service<Account> {
     Repo<Account> repository;
+    Encryptor encryptor;
 
     @Autowired
     public void setRepository(Repo<Account> repository) {
         this.repository = repository;
     }
 
-    Encryptor encryptor;
-
-//    @Autowired
-//    public AccountService(Repo<Account> repository) {
-//        this.repository = repository;
-//    }
 
     @Autowired
-    public void setEncryptor(PasswordEncryptor encryptor) {
+    public void setEncryptor(Encryptor encryptor) {
         this.encryptor = encryptor;
     }
 
