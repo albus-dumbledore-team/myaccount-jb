@@ -8,6 +8,10 @@ import com.bootcamp.demo.model.AccountDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
 
 @RestController
 public class AccountController {
@@ -38,11 +42,11 @@ public class AccountController {
     }
     @GetMapping("/viewAccount/{username}")
     @ResponseBody
-    AccountDetails viewAccount(@PathVariable String username) throws ControllerException {
+    public AccountDetails viewAccount(@PathVariable String username) throws ControllerException {
         try {
             Account account = service.findOne(username);
             AccountDetails accountDetails = new AccountDetails(account.getName(), account.getEmail(), account.getUsername(), account.getPhoneNumber(), account.getAddress(), account.getDateOfBirth());
-            System.out.println("[VIEW]: Account with username " + account);
+            System.out.println("[VIEW]: Account with username " + account.getUsername());
             return accountDetails;
         } catch (ServiceException exception) {
             throw new ControllerException(exception.getMessage());
@@ -51,5 +55,17 @@ public class AccountController {
         }
         return null;
     }
+
+    @GetMapping("/getAll")
+    @ResponseBody
+    public List<Account> viewAll(){
+        try {
+            return service.getAll();
+        } catch (ExecutionException | InterruptedException | ServiceException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<Account>();
+    }
+
 }
 
