@@ -10,9 +10,9 @@ public class Account {
     private String password;
     private String phoneNumber;
     private String address;
-    Date dateOfBirth;
+    private String dateOfBirth;
 
-    public Account(String name, String email, String username, String password, String phoneNumber, String address,  Date dateOfBirth) {
+    public Account(String name, String email, String username, String password, String phoneNumber, String address, String dateOfBirth) {
         this.name = name;
         this.email = email;
         this.username = username;
@@ -75,11 +75,11 @@ public class Account {
         this.address = address;
     }
 
-    public  Date getDateOfBirth() {
+    public  String getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth( Date dateOfBirth) {
+    public void setDateOfBirth( String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 }

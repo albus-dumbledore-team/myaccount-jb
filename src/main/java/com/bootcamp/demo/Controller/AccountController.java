@@ -4,8 +4,10 @@ import Exceptions.ControllerException;
 import Exceptions.ServiceException;
 import com.bootcamp.demo.business.Service;
 import com.bootcamp.demo.model.Account;
+import com.bootcamp.demo.model.AccountDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 public class AccountController {
@@ -34,4 +36,20 @@ public class AccountController {
             throw new ControllerException(exception.getMessage());
         }
     }
+    @GetMapping("/viewAccount/{username}")
+    @ResponseBody
+    AccountDetails viewAccount(@PathVariable String username) throws ControllerException {
+        try {
+            Account account = service.findOne(username);
+            AccountDetails accountDetails = new AccountDetails(account.getName(), account.getEmail(), account.getUsername(), account.getPhoneNumber(), account.getAddress(), account.getDateOfBirth());
+            System.out.println("[VIEW]: Account with username " + account);
+            return accountDetails;
+        } catch (ServiceException exception) {
+            throw new ControllerException(exception.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
+

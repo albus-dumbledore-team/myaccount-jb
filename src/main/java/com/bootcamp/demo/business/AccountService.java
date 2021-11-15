@@ -14,12 +14,6 @@ public class AccountService implements Service<Account> {
     Encryptor encryptor;
 
     @Autowired
-    public void setRepository(Repo<Account> repository) {
-        this.repository = repository;
-    }
-
-
-    @Autowired
     public void setEncryptor(Encryptor encryptor) {
         this.encryptor = encryptor;
     }
@@ -33,6 +27,11 @@ public class AccountService implements Service<Account> {
         } catch (ExecutionException | InterruptedException exception) {
             throw new ServiceException(exception.getMessage());
         }
+    }
+
+    @Override
+    public Account findOne(String username) throws ServiceException, ExecutionException, InterruptedException {
+        return repository.findOne(username);
     }
 
     @Override
