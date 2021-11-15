@@ -1,6 +1,7 @@
 package com.bootcamp.demo.model;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 public class Account {
     private String name;
@@ -80,4 +81,32 @@ public class Account {
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
+
+    public boolean isValidName(String name){
+        for (char c: name.toCharArray()){
+            if (Character.isDigit(c))
+                return false;
+        }
+        return true;
+    }
+
+    public boolean isValidDOB(LocalDate dateOfBirth){
+        Period period = Period.between(dateOfBirth, LocalDate.now());
+        if(period.getYears() > 18)
+            return true;
+        else
+            return false;
+    }
+
+    public boolean isValidPhoneNumber(String phoneNumber){
+        if(phoneNumber.length() != 10)
+            return false;
+
+        for (char c: phoneNumber.toCharArray()){
+            if (!Character.isDigit(c))
+                return false;
+        }
+        return true;
+    }
+
 }
