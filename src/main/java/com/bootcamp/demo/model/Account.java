@@ -1,7 +1,12 @@
 package com.bootcamp.demo.model;
 
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.ZoneId;
+import java.util.Date;
 
 public class Account {
     private String name;
@@ -10,9 +15,9 @@ public class Account {
     private String password;
     private String phoneNumber;
     private String address;
-    private LocalDate dateOfBirth;
+    private String dateOfBirth;
 
-    public Account(String name, String email, String username, String password, String phoneNumber, String address, LocalDate dateOfBirth) {
+    public Account(String name, String email, String username, String password, String phoneNumber, String address, String dateOfBirth) {
         this.name = name;
         this.email = email;
         this.username = username;
@@ -20,6 +25,7 @@ public class Account {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.dateOfBirth = dateOfBirth;
+
     }
 
     public Account(){
@@ -74,11 +80,11 @@ public class Account {
         this.address = address;
     }
 
-    public LocalDate getDateOfBirth() {
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
+    public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -90,8 +96,12 @@ public class Account {
         return true;
     }
 
-    public boolean isValidDOB(LocalDate dateOfBirth){
-        Period period = Period.between(dateOfBirth, LocalDate.now());
+    public boolean isValidDOB(String dateOfBirth) throws ParseException {
+        String pattern = "MM-dd-yyyy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        Date date = simpleDateFormat.parse(dateOfBirth);
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Period period = Period.between(localDate, LocalDate.now());
         if(period.getYears() > 18)
             return true;
         else
@@ -108,5 +118,4 @@ public class Account {
         }
         return true;
     }
-
 }
