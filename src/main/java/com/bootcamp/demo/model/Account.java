@@ -1,20 +1,33 @@
 package com.bootcamp.demo.model;
 
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
-import java.util.Date;
+import javax.validation.constraints.*;
 
 public class Account {
+
+    @NotBlank(message = "Name is mandatory")
+    @Pattern(regexp = "^([A-Z][a-z]*((\\s)))+[A-Z][a-z]*$")
     private String name;
+
+    @NotBlank(message = "Email is mandatory")
+    @Email
     private String email;
+
+    @NotBlank(message = "Username is mandatory")
+    @Pattern(regexp = "^[a-zA-Z0-9]*$")
     private String username;
+
+    @NotBlank(message = "Password is mandatory")
     private String password;
+
+    @NotBlank(message = "Phone number is mandatory")
+    @Size(min = 10, max = 10)
+    @Pattern(regexp = "^[0-9]")
     private String phoneNumber;
+
+    @NotBlank(message = "Address is mandatory")
     private String address;
+
+    @NotBlank(message = "Date of birth is mandatory")
     private String dateOfBirth;
 
     public Account(String name, String email, String username, String password, String phoneNumber, String address, String dateOfBirth) {
@@ -25,7 +38,6 @@ public class Account {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.dateOfBirth = dateOfBirth;
-
     }
 
     public Account(){
@@ -86,36 +98,5 @@ public class Account {
 
     public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
-    }
-
-    public boolean isValidName(String name){
-        for (char c: name.toCharArray()){
-            if (Character.isDigit(c))
-                return false;
-        }
-        return true;
-    }
-
-    public boolean isValidDOB(String dateOfBirth) throws ParseException {
-        String pattern = "MM-dd-yyyy";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        Date date = simpleDateFormat.parse(dateOfBirth);
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        Period period = Period.between(localDate, LocalDate.now());
-        if(period.getYears() > 18)
-            return true;
-        else
-            return false;
-    }
-
-    public boolean isValidPhoneNumber(String phoneNumber){
-        if(phoneNumber.length() != 10)
-            return false;
-
-        for (char c: phoneNumber.toCharArray()){
-            if (!Character.isDigit(c))
-                return false;
-        }
-        return true;
     }
 }
