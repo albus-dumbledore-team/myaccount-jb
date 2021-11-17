@@ -1,7 +1,7 @@
 package com.bootcamp.demo.Controller;
 
 import com.bootcamp.demo.business.Service;
-import com.bootcamp.demo.Controller.RequestDTO.UpdatePasswordDTO;
+import com.bootcamp.demo.controller.DTOs.UpdatePasswordDTO;
 import com.bootcamp.demo.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
