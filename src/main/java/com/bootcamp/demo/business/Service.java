@@ -1,11 +1,8 @@
 package com.bootcamp.demo.business;
 
-import Exceptions.ServiceException;
-import com.bootcamp.demo.model.Account;
-
-import java.util.concurrent.ExecutionException;
+import com.bootcamp.demo.exception.ServiceException;
 
 public interface Service<T> {
-    String add(T elem) throws ServiceException, com.bootcamp.demo.exception.ServiceException;
+    String add(T elem) throws ServiceException;
     boolean updatePassword(String username, String newPassword);
 }

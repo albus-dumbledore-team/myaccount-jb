@@ -9,30 +9,12 @@ import org.springframework.stereotype.Repository;
 import java.util.concurrent.ExecutionException;
 
 @Repository
-public class AccountRepository implements Repo<Account> {
+public class AccountRepository implements AbstractRepository<Account> {
     public String add(final Account account) throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
         DocumentReference docRef = db.collection("accounts").document(account.getUsername());
         ApiFuture<WriteResult> writeResult = docRef.set(account);
         return writeResult.get().getUpdateTime().toString();
-    }
-
-    @Override
-    public boolean delete(String username) {
-        if (username == null) {
-            throw new IllegalArgumentException("Username must not be null.");
-        }
-
-        Firestore db = FirestoreClient.getFirestore();
-        CollectionReference collectionReference = db.collection("accounts");
-        DocumentReference documentReference = collectionReference.document(username);
-
-        if (documentReference != null) {
-            documentReference.delete();
-            return true;
-        }
-
-        return false;
     }
 
     @Override
