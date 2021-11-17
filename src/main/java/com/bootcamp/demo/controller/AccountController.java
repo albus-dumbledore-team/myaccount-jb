@@ -1,7 +1,7 @@
-package com.bootcamp.demo.Controller;
+package com.bootcamp.demo.controller;
 
-import com.bootcamp.demo.Exceptions.ControllerException;
-import com.bootcamp.demo.Exceptions.ServiceException;
+import com.bootcamp.demo.exception.ControllerException;
+import com.bootcamp.demo.exception.ServiceException;
 import com.bootcamp.demo.business.Service;
 import com.bootcamp.demo.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
