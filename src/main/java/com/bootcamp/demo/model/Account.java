@@ -1,18 +1,36 @@
 package com.bootcamp.demo.model;
 
-
-import java.util.Date;
+import javax.validation.constraints.*;
 
 public class Account {
-    private String name;
-    private String email;
-    private String username;
-    private String password;
-    private String phoneNumber;
-    private String address;
-    Date dateOfBirth;
 
-    public Account(String name, String email, String username, String password, String phoneNumber, String address,  Date dateOfBirth) {
+    @NotBlank(message = "Name is mandatory")
+    @Pattern(regexp = "^([A-Z][a-z]*((\\s)))+[A-Z][a-z]*$")
+    private String name;
+
+    @NotBlank(message = "Email is mandatory")
+    @Email
+    private String email;
+
+    @NotBlank(message = "Username is mandatory")
+    @Pattern(regexp = "^[a-zA-Z0-9]*$")
+    private String username;
+
+    @NotBlank(message = "Password is mandatory")
+    private String password;
+
+    @NotBlank(message = "Phone number is mandatory")
+    @Size(min = 10, max = 10)
+    @Pattern(regexp = "^[0-9]")
+    private String phoneNumber;
+
+    @NotBlank(message = "Address is mandatory")
+    private String address;
+
+    @NotBlank(message = "Date of birth is mandatory")
+    private String dateOfBirth;
+
+    public Account(String name, String email, String username, String password, String phoneNumber, String address, String dateOfBirth) {
         this.name = name;
         this.email = email;
         this.username = username;
@@ -20,7 +38,6 @@ public class Account {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.dateOfBirth = dateOfBirth;
-
     }
 
     public Account(){
@@ -75,11 +92,11 @@ public class Account {
         this.address = address;
     }
 
-    public  Date getDateOfBirth() {
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth( Date dateOfBirth) {
+    public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 }
