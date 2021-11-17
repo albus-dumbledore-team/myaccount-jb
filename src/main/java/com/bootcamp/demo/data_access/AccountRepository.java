@@ -26,6 +26,7 @@ public class AccountRepository implements Repo<Account> {
 //            return documentSnapshot.toObject(Account.class);
         if (documentSnapshot.exists()) {
             Map<String, Object> data = documentSnapshot.getData();
+            System.out.println(data);
             String name = data.get("name").toString();
             String email =  data.get("email").toString();
             String password =  data.get("password").toString();

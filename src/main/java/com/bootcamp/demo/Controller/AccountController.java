@@ -45,9 +45,15 @@ public class AccountController {
     public AccountDetails viewAccount(@PathVariable String username) throws ControllerException {
         try {
             Account account = service.findOne(username);
-            AccountDetails accountDetails = new AccountDetails(account.getName(), account.getEmail(), account.getUsername(), account.getPhoneNumber(), account.getAddress(), account.getDateOfBirth());
-            System.out.println("[VIEW]: Account with username " + account.getUsername());
-            return accountDetails;
+            return new AccountDetails(
+                    account.getName(),
+                    account.getEmail(),
+                    account.getUsername(),
+                    account.getPhoneNumber(),
+                    account.getAddress(),
+                    account.getDateOfBirth());
+
+
         } catch (ServiceException exception) {
             throw new ControllerException(exception.getMessage());
         } catch (Exception e) {
