@@ -1,4 +1,4 @@
-package com.bootcamp.demo.controller.DTOs;
+package com.bootcamp.demo.controller.dtos;
 
 public class UpdatePasswordDTO {
     private String username;
