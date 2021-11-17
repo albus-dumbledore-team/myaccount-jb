@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.concurrent.ExecutionException;
 
 @Repository
-public class AccountRepository implements Repo<Account> {
+public class AccountRepository implements AbstractRepository<Account> {
     public String add(final Account account) throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
         DocumentReference docRef = db.collection("accounts").document(account.getUsername());

@@ -1,4 +1,4 @@
-package Exceptions;
+package com.bootcamp.demo.Exceptions;
 
 public class EncryptionException extends Exception{
     public EncryptionException(String message) {

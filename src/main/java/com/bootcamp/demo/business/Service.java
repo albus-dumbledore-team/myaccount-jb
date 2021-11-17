@@ -1,9 +1,6 @@
 package com.bootcamp.demo.business;
 
-import Exceptions.ServiceException;
-import com.bootcamp.demo.model.Account;
-
-import java.util.concurrent.ExecutionException;
+import com.bootcamp.demo.Exceptions.ServiceException;
 
 public interface Service<T> {
     String add(T elem) throws ServiceException;
