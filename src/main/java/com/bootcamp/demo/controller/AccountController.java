@@ -2,8 +2,6 @@ package com.bootcamp.demo.controller;
 
 import com.bootcamp.demo.business.Service;
 import com.bootcamp.demo.controller.dtos.UpdatePasswordDTO;
-import com.bootcamp.demo.exception.ControllerException;
-import com.bootcamp.demo.exception.ServiceException;
 import com.bootcamp.demo.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,15 +13,6 @@ public class AccountController {
     @Autowired
     public AccountController(Service<Account> service) {
         this.service = service;
-    }
-
-    @PostMapping("/addAccount")
-    void add(@RequestBody Account account) throws ControllerException {
-        try {
-            service.add(account);
-        }catch(ServiceException exception){
-            throw new ControllerException(exception.getMessage());
-        }
     }
 
     @PatchMapping("/updatePassword")
