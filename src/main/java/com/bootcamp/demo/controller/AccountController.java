@@ -6,6 +6,7 @@ import com.bootcamp.demo.business.Service;
 import com.bootcamp.demo.model.Account;
 import com.bootcamp.demo.model.AccountDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -23,11 +24,11 @@ public class AccountController {
     }
 
     @PostMapping("/addAccount")
-    void add(@RequestBody Account account) throws ControllerException {
+    ResponseEntity<String> add(@RequestBody Account account) throws ControllerException {
         try {
-            service.add(account);
+            return ResponseEntity.ok().body(service.add(account));
         } catch (ServiceException exception) {
-            throw new ControllerException(exception.getMessage());
+            return ResponseEntity.status(406).body(exception.getMessage());
         }
     }
 
@@ -64,13 +65,12 @@ public class AccountController {
 
     @GetMapping("/getAll")
     @ResponseBody
-    public List<Account> viewAll(){
+    public ResponseEntity viewAll(){
         try {
-            return service.getAll();
+            return ResponseEntity.ok().body(service.getAll());
         } catch (ExecutionException | InterruptedException | ServiceException e) {
-            e.printStackTrace();
+            return ResponseEntity.status(404).body(e.toString());
         }
-        return new ArrayList<Account>();
     }
 
 }

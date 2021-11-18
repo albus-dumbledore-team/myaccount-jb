@@ -48,13 +48,11 @@ public class AccountRepository implements AbstractRepository<Account> {
         ApiFuture<String> futureTransaction = db.runTransaction(transaction -> {
             DocumentSnapshot snapshot = transaction.get(docRef).get();
             if(snapshot.exists()){
-                throw new Exception(String.format("An account with the same username {%s} already exists!",snapshot.getId().toString()));
+                throw new Exception(String.format("An account with the same username {%s} already exists!",snapshot.getId()));
             }
             else {
                 Transaction writeResult =transaction.set(docRef,account);
-//                ApiFuture<WriteResult> writeResult = docRef.set(account);
-//                return writeResult.get().getUpdateTime().toString();
-                return writeResult.toString();
+                return "Account created successfully";
             }
         });
         return futureTransaction.get();
