@@ -1,33 +1,19 @@
 package com.bootcamp.demo.model;
 
-import javax.validation.constraints.*;
-
 public class Account {
 
-    @NotBlank(message = "Name is mandatory")
-    @Pattern(regexp = "^([A-Z][a-z]*((\\s)))+[A-Z][a-z]*$")
     private String name;
 
-    @NotBlank(message = "Email is mandatory")
-    @Email
     private String email;
 
-    @NotBlank(message = "Username is mandatory")
-    @Pattern(regexp = "^[a-zA-Z0-9]*$")
     private String username;
 
-    @NotBlank(message = "Password is mandatory")
     private String password;
 
-    @NotBlank(message = "Phone number is mandatory")
-    @Size(min = 10, max = 10)
-    @Pattern(regexp = "^[0-9]")
     private String phoneNumber;
 
-    @NotBlank(message = "Address is mandatory")
     private String address;
 
-    @NotBlank(message = "Date of birth is mandatory")
     private String dateOfBirth;
 
     public Account(String name, String email, String username, String password, String phoneNumber, String address, String dateOfBirth) {
