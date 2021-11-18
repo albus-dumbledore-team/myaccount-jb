@@ -5,6 +5,7 @@ import com.bootcamp.demo.data_access.Repo;
 import com.bootcamp.demo.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -14,14 +15,13 @@ public class AccountService implements Service<Account> {
     Encryptor encryptor;
 
     @Autowired
-    public void setRepository(Repo<Account> repository) {
-        this.repository = repository;
-    }
-
-
-    @Autowired
     public void setEncryptor(Encryptor encryptor) {
         this.encryptor = encryptor;
+    }
+
+    @Autowired
+    public void setRepository(Repo<Account> accountRepo){
+        this.repository = accountRepo;
     }
 
     public String add(final Account account) throws ServiceException {
@@ -36,7 +36,20 @@ public class AccountService implements Service<Account> {
     }
 
     @Override
+    public Account findOne(String username) throws ServiceException, ExecutionException, InterruptedException {
+        return repository.findOne(username);
+    }
+
+    @Override
     public boolean delete(String username) {
         return repository.delete(username);
+    }
+
+    public List<Account> getAll() throws ServiceException {
+        try {
+            return repository.getAll();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 }
