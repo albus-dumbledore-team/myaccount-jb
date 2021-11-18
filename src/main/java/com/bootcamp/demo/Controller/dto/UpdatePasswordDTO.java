@@ -1,4 +1,4 @@
-package com.bootcamp.demo.controller.dtos;
+package com.bootcamp.demo.controller.dto;
 
 import javax.validation.constraints.Pattern;
 
