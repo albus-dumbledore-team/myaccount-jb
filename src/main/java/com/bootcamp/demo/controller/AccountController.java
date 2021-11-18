@@ -5,6 +5,7 @@ import com.bootcamp.demo.exception.ServiceException;
 import com.bootcamp.demo.business.Service;
 import com.bootcamp.demo.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,11 +20,11 @@ public class AccountController {
     }
 
     @PostMapping("/addAccount")
-    void add(@RequestBody Account account) throws ControllerException {
+    ResponseEntity<String> add(@RequestBody Account account) {
         try {
-            service.add(account);
-        }catch(ServiceException exception){
-            throw new ControllerException(exception.getMessage());
+            return ResponseEntity.ok().body(service.add(account));
+        } catch (ServiceException exception) {
+            return ResponseEntity.status(406).body(exception.getMessage());
         }
     }
 }
