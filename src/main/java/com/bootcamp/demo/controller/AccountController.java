@@ -1,4 +1,4 @@
-package com.bootcamp.demo.Controller;
+package com.bootcamp.demo.controller;
 
 import Exceptions.ControllerException;
 import Exceptions.ServiceException;

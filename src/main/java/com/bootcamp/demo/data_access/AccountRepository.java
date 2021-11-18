@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Repository
-public class AccountRepository implements Repo<Account> {
+public class AccountRepository implements AbstractRepository<Account> {
     @Override
     public Account findOne(String username) throws ExecutionException, InterruptedException {
         // return optional?
@@ -40,10 +40,24 @@ public class AccountRepository implements Repo<Account> {
     }
 
     public String add(Account account) throws ExecutionException, InterruptedException {
+        //checks if an account with the same username doesn't already exists and adds the new account
         Firestore db = FirestoreClient.getFirestore();
         DocumentReference docRef = db.collection("accounts").document(account.getUsername());
-        ApiFuture<WriteResult> writeResult = docRef.set(account);
-        return writeResult.get().getUpdateTime().toString();
+
+        //use transaction to make the operation atomic
+        ApiFuture<String> futureTransaction = db.runTransaction(transaction -> {
+            DocumentSnapshot snapshot = transaction.get(docRef).get();
+            if(snapshot.exists()){
+                throw new Exception(String.format("An account with the same username {%s} already exists!",snapshot.getId().toString()));
+            }
+            else {
+                Transaction writeResult =transaction.set(docRef,account);
+//                ApiFuture<WriteResult> writeResult = docRef.set(account);
+//                return writeResult.get().getUpdateTime().toString();
+                return writeResult.toString();
+            }
+        });
+        return futureTransaction.get();
     }
 
     @Override
