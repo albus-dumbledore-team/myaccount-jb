@@ -47,6 +47,16 @@ public class AccountRepository implements Repo<Account> {
     }
 
     @Override
+    public String update(Account account) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+        CollectionReference collectionReference = db.collection("accounts");
+        DocumentReference documentReference = collectionReference.document(account.getUsername());
+        ApiFuture<WriteResult> writeResult = documentReference.set(account);
+        return writeResult.get().getUpdateTime().toString();
+
+    }
+
+    @Override
     public boolean delete(String username) {
         if (username == null) {
             throw new IllegalArgumentException("Username must not be null.");

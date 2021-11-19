@@ -41,6 +41,12 @@ public class AccountService implements Service<Account> {
     }
 
     @Override
+    public String update(Account account) throws ServiceException, ExecutionException, InterruptedException {
+        System.out.println("Service --> " + account);
+        return repository.update(account);
+    }
+
+    @Override
     public boolean delete(String username) {
         return repository.delete(username);
     }

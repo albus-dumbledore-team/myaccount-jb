@@ -31,6 +31,30 @@ public class AccountController {
         }
     }
 
+    @PutMapping("/editAccount")
+    void update(@RequestBody AccountDetails accountDetails) throws ControllerException {
+        System.out.println("update accountDetails-->" + accountDetails.getName());
+        try {
+            Account searchedAccount = service.findOne(accountDetails.getUsername());
+
+            if (searchedAccount != null) {
+                Account account = new Account(
+                        accountDetails.getName(),
+                        accountDetails.getEmail(),
+                        accountDetails.getUsername(),
+                        searchedAccount.getPassword(),
+                        accountDetails.getPhoneNumber(),
+                        accountDetails.getAddress(),
+                        accountDetails.getDateOfBirth()
+                );
+                this.service.update(account);
+            }
+
+        } catch (ServiceException | ExecutionException | InterruptedException e) {
+            throw new ControllerException(e.getMessage());
+        }
+    }
+
     @DeleteMapping("/deleteAccount/{username}")
     public void delete(@PathVariable String username) throws ControllerException {
         try {
@@ -40,6 +64,7 @@ public class AccountController {
             throw new ControllerException(exception.getMessage());
         }
     }
+
     @GetMapping("/viewAccount/{username}")
     @ResponseBody
     public AccountDetails viewAccount(@PathVariable String username) throws ControllerException {
@@ -64,7 +89,7 @@ public class AccountController {
 
     @GetMapping("/getAll")
     @ResponseBody
-    public List<Account> viewAll(){
+    public List<Account> viewAll() {
         try {
             return service.getAll();
         } catch (ExecutionException | InterruptedException | ServiceException e) {
