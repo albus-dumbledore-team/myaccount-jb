@@ -1,18 +1,26 @@
 package com.bootcamp.demo.model;
 
-
-import java.util.Date;
+import javax.validation.constraints.*;
 
 public class Account {
+
+
     private String name;
+
+
     private String email;
+
+
     private String username;
+
     private String password;
     private String phoneNumber;
-    private String address;
-    Date dateOfBirth;
 
-    public Account(String name, String email, String username, String password, String phoneNumber, String address,  Date dateOfBirth) {
+    private String address;
+
+    private String dateOfBirth;
+
+    public Account(String name, String email, String username, String password, String phoneNumber, String address, String dateOfBirth) {
         this.name = name;
         this.email = email;
         this.username = username;
@@ -20,7 +28,6 @@ public class Account {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.dateOfBirth = dateOfBirth;
-
     }
 
     public Account(){
@@ -75,11 +82,11 @@ public class Account {
         this.address = address;
     }
 
-    public  Date getDateOfBirth() {
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth( Date dateOfBirth) {
+    public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 }
