@@ -10,7 +10,6 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -74,9 +73,12 @@ public class AccountService implements Service<Account> {
 
 
     @Override
-    public boolean updatePassword(String username, String newPassword) {
-        // TODO: password validation
+    public String updatePassword(String username, String newPassword) throws ServiceException {
         String password = encryptor.encryptSHA256(newPassword);
-        return repository.updatePassword(username, password);
+        try {
+            return repository.updatePassword(username, password);
+        } catch (ExecutionException | InterruptedException e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 }

@@ -30,14 +30,11 @@ public class AccountRepository implements AbstractRepository<Account> {
     }
 
     @Override
-    public boolean updatePassword(String username, String newPassword) {
+    public String updatePassword(String username, String newPassword) throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
         CollectionReference collectionReference = db.collection("accounts");
         DocumentReference documentReference = collectionReference.document(username);
-        if (documentReference != null) {
-            documentReference.update("password", newPassword);
-            return true;
-        }
-        return false;
+        ApiFuture<WriteResult> writeResult = documentReference.update("password", newPassword);
+        return writeResult.get().getUpdateTime().toString();
     }
 }

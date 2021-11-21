@@ -30,8 +30,12 @@ public class AccountController {
     }
 
     @PatchMapping("/updatePassword")
-    public void updatePassword(@RequestBody UpdatePasswordDTO dto) {
-        service.updatePassword(dto.getUsername(), dto.getPassword());
+    public ResponseEntity<String> updatePassword(@RequestBody UpdatePasswordDTO dto) {
+        try {
+            return ResponseEntity.ok().body(service.updatePassword(dto.getUsername(), dto.getPassword()));
+        } catch (ServiceException e) {
+            return ResponseEntity.status(406).body(e.getMessage());
+        }
     }
     
 }
