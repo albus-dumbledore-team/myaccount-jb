@@ -7,6 +7,7 @@ import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 @Repository
@@ -41,12 +42,10 @@ public class AccountRepository implements AbstractRepository<Account> {
         DocumentSnapshot documentSnapshot = future.get();
 
         if(documentSnapshot.exists()) {
-            Map<String, Object> data = documentSnapshot.getData();
-
-            String passwd = data.get("password").toString();
+            String dbOldPassword = Objects.requireNonNull(documentSnapshot.getData()).get("password").toString();
 
             // check if the old password matches
-            if(passwd.equals(oldPassword)){
+            if(dbOldPassword.equals(oldPassword)){
                 ApiFuture<WriteResult> writeResult = documentReference.update("password", newPassword);
                 return writeResult.get().getUpdateTime().toString();
             }
