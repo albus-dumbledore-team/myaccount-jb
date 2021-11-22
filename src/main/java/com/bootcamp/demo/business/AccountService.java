@@ -10,8 +10,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
-import java.util.Date;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Stream;
 
 
 @org.springframework.stereotype.Service
@@ -29,31 +30,56 @@ public class AccountService implements Service<Account> {
         this.encryptor = encryptor;
     }
 
-    public String accountValidation(Account account) throws ServiceException {
+    public ValidationResponse accountValidation(Account account){
 
-        StringBuilder stringBuilder = new StringBuilder();
-        if(account.getName().isEmpty() || account.getPassword().isEmpty() || account.getEmail().isEmpty() || account.getUsername().isEmpty() || account.getAddress().isEmpty() || account.getPhoneNumber().isEmpty() || account.getDateOfBirth().isEmpty())
-            stringBuilder.append("Empty fields");
+        ValidationResponse validationResponse = new ValidationResponse();
 
-        String expression = "^([A-Z][a-z]*((\\s)))+[A-Z][a-z]*$";
-        if(!account.getName().matches(expression))
-            stringBuilder.append("Wrong name format: must contain only letters and must be \"FirstName LastName\"  \n");
+        if(account.getName().isEmpty())
+            validationResponse.addMessage("Name field is empty");
 
-        expression = "[a-zA-Z0-9]*$";
-        if(!account.getUsername().matches(expression))
-            stringBuilder.append("Wrong username format: must contain only digits and letter\n");
+        if(account.getPassword().isEmpty())
+            validationResponse.addMessage("Password field is empty");
+
+        if(account.getEmail().isEmpty())
+            validationResponse.addMessage("Email field is empty");
+
+        if(account.getUsername().isEmpty())
+            validationResponse.addMessage("Username field is empty");
+
+        if(account.getAddress().isEmpty())
+            validationResponse.addMessage("Address field is empty");
+
+        if(account.getPhoneNumber().isEmpty())
+            validationResponse.addMessage("PhoneNumber field is empty");
+
+        if(account.getDateOfBirth().isEmpty())
+            validationResponse.addMessage("DateOfBirth field is empty");
+
+
+        final String nameExpression = "^([A-Z][a-z]*((\\s)))+[A-Z][a-z]*$";
+        if(!account.getName().matches(nameExpression))
+            validationResponse.addMessage("Wrong name format: must contain only letters and must be \"FirstName LastName\"  \n");
+
+        final String phoneNumberExpression = "[a-zA-Z0-9]*$";
+        if(!account.getUsername().matches(phoneNumberExpression))
+            validationResponse.addMessage("Wrong username format: must contain only digits and letter \n");
 
         if(account.getPhoneNumber().length() != 10)
-            stringBuilder.append("Wrong phoneNumber format: must have 10 digits\n");
+            validationResponse.addMessage("Wrong phoneNumber format: must have 10 digits \n");
+
         else {
-            for (char c : account.getPhoneNumber().toCharArray()) {
-                if (!Character.isDigit(c))
-                    stringBuilder.append("Wrong phoneNumber format: must contain only digits\n");
-            }
+            List<String> list = Arrays.asList(account.getPhoneNumber().split(""));
+
+            boolean match = list
+                    .stream()
+                    .allMatch(str -> str.matches("\\d+"));
+            if(!match)
+                validationResponse.addMessage("Wrong phoneNumber format: must contain only digits \n");
+
         }
 
         if(account.getDateOfBirth().length() != 10)
-            stringBuilder.append("Wrong dateOfBirth format: must be MM-dd-yyyy\n");
+            validationResponse.addMessage("Wrong dateOfBirth format: must be MM-dd-yyyy \n");
         else {
             String pattern = "MM-dd-yyyy";
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -62,27 +88,29 @@ public class AccountService implements Service<Account> {
                 LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 Period period = Period.between(localDate, LocalDate.now());
                 if (period.getYears() < 18)
-                    stringBuilder.append("Minimum age must be 18\n");
+                    validationResponse.addMessage("Minimum age must be 18 \n");
+
             } catch (ParseException e) {
-                stringBuilder.append("Wrong dateOfBirth format: must be MM-dd-yyyy\n");
+                validationResponse.addMessage("Wrong dateOfBirth format: must be MM-dd-yyyy \n");
                 e.printStackTrace();
             }
         }
 
-        if(stringBuilder.length() != 0)
-            throw new ServiceException(stringBuilder.toString());
-        else {
-            return ("OK");
-        }
+        if(!validationResponse.getMessages().isEmpty())
+            validationResponse.setErrorCode(500);
+
+        return (validationResponse);
+
     }
 
     public String add(final Account account) throws ServiceException {
         try {
             account.setPassword(encryptor.encryptSHA256(account.getPassword()));
-            if(accountValidation(account).equals("OK"))
+            if(accountValidation(account).getErrorCode() == 200)
                 return repository.add(account);
-            else
-                throw new ServiceException(accountValidation(account));
+            else {
+                throw new ServiceException(accountValidation(account).getMessages().toString());
+            }
         } catch (ExecutionException | InterruptedException exception) {
             throw new ServiceException(exception.getMessage());
         }
