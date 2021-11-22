@@ -4,6 +4,7 @@ import com.bootcamp.demo.model.Account;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
@@ -44,8 +45,8 @@ public class AccountRepository implements AbstractRepository<Account> {
         if(documentSnapshot.exists()) {
             String dbOldPassword = Objects.requireNonNull(documentSnapshot.getData()).get("password").toString();
 
-            // check if the old password matches
-            if(dbOldPassword.equals(oldPassword)){
+            // checking if the provided oldPassword can generate a hash equal to the database hashed password
+            if(BCrypt.checkpw(oldPassword, dbOldPassword)){
                 ApiFuture<WriteResult> writeResult = documentReference.update("password", newPassword);
                 return writeResult.get().getUpdateTime().toString();
             }

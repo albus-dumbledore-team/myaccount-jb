@@ -80,9 +80,9 @@ public class AccountService implements Service<Account> {
         }
 
         String newPasswd = encryptor.encryptSHA256(newPassword);
-        String oldPasswd = encryptor.encryptSHA256(oldPassword);
+
         try {
-            return repository.updatePassword(username, oldPasswd, newPasswd);
+            return repository.updatePassword(username, oldPassword, newPasswd);
         } catch (Exception e) {
             throw new ServiceException(e.getMessage());
         }
