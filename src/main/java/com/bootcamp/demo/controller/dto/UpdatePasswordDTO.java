@@ -6,14 +6,28 @@ public class UpdatePasswordDTO {
     @Pattern(regexp = "^[a-zA-Z0-9]+")
     private String username;
     @Pattern(regexp = "^[a-zA-Z0-9@#!?]{6,}")
-    private String password;
+    private String oldPassword;
+    @Pattern(regexp = "^[a-zA-Z0-9@#!?]{6,}")
+    private String newPassword;
+    @Pattern(regexp = "^[a-zA-Z0-9@#!?]{6,}")
+    private String confirmNewPassword;
 
     public UpdatePasswordDTO() {
     }
 
-    public UpdatePasswordDTO(String username, String password) {
+    public UpdatePasswordDTO(String username, String oldPassword, String newPassword, String confirmNewPassword) {
         this.username = username;
-        this.password = password;
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
+        this.confirmNewPassword = confirmNewPassword;
+    }
+
+    public String getConfirmNewPassword() {
+        return confirmNewPassword;
+    }
+
+    public void setConfirmNewPassword(String confirmNewPassword) {
+        this.confirmNewPassword = confirmNewPassword;
     }
 
     public String getUsername() {
@@ -24,11 +38,19 @@ public class UpdatePasswordDTO {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getOldPassword() {
+        return oldPassword;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 }

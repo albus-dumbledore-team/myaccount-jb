@@ -9,5 +9,5 @@ import java.util.concurrent.ExecutionException;
 
 public interface AbstractRepository<T> {
     String add(T elem) throws ExecutionException, InterruptedException;
-    String updatePassword(String username, String newPassword) throws ExecutionException, InterruptedException;
+    String updatePassword(String username, String oldPassword, String newPassword) throws Exception;
 }

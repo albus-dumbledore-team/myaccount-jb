@@ -73,11 +73,17 @@ public class AccountService implements Service<Account> {
 
 
     @Override
-    public String updatePassword(String username, String newPassword) throws ServiceException {
-        String password = encryptor.encryptSHA256(newPassword);
+    public String updatePassword(String username, String oldPassword, String newPassword, String confirmNewPassword) throws ServiceException {
+
+        if(!newPassword.equals(confirmNewPassword)){
+            throw new ServiceException("New password and Confirm new password field do not match");
+        }
+
+        String newPasswd = encryptor.encryptSHA256(newPassword);
+        String oldPasswd = encryptor.encryptSHA256(oldPassword);
         try {
-            return repository.updatePassword(username, password);
-        } catch (ExecutionException | InterruptedException e) {
+            return repository.updatePassword(username, oldPasswd, newPasswd);
+        } catch (Exception e) {
             throw new ServiceException(e.getMessage());
         }
     }

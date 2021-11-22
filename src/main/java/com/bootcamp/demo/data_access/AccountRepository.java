@@ -6,6 +6,7 @@ import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Repository;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Repository
@@ -30,11 +31,29 @@ public class AccountRepository implements AbstractRepository<Account> {
     }
 
     @Override
-    public String updatePassword(String username, String newPassword) throws ExecutionException, InterruptedException {
+    public String updatePassword(String username, String oldPassword, String newPassword) throws Exception {
         Firestore db = FirestoreClient.getFirestore();
         CollectionReference collectionReference = db.collection("accounts");
         DocumentReference documentReference = collectionReference.document(username);
-        ApiFuture<WriteResult> writeResult = documentReference.update("password", newPassword);
-        return writeResult.get().getUpdateTime().toString();
+
+
+        ApiFuture<DocumentSnapshot> future = documentReference.get();
+        DocumentSnapshot documentSnapshot = future.get();
+
+        if(documentSnapshot.exists()) {
+            Map<String, Object> data = documentSnapshot.getData();
+
+            String passwd = data.get("password").toString();
+
+            // check if the old password matches
+            if(passwd.equals(oldPassword)){
+                ApiFuture<WriteResult> writeResult = documentReference.update("password", newPassword);
+                return writeResult.get().getUpdateTime().toString();
+            }
+
+            throw new Exception("Incorrect old password");
+        }
+
+        return null;
     }
 }
