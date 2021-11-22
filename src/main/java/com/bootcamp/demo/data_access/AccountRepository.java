@@ -47,8 +47,8 @@ public class AccountRepository implements AbstractRepository<Account> {
 
             // checking if the provided oldPassword can generate a hash equal to the database hashed password
             if(BCrypt.checkpw(oldPassword, dbOldPassword)){
-                ApiFuture<WriteResult> writeResult = documentReference.update("password", newPassword);
-                return writeResult.get().getUpdateTime().toString();
+                documentReference.update("password", newPassword);
+                return "Password changed successfully";
             }
 
             throw new Exception("Incorrect old password");
