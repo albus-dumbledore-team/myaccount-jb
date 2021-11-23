@@ -6,8 +6,6 @@ import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Repository;
-
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
@@ -44,7 +42,6 @@ public class AccountRepository implements AbstractRepository<Account> {
 
         documentReference.delete();
     }
-}
 
     @Override
     public String updatePassword(String username, String oldPassword, String newPassword) throws Exception {
