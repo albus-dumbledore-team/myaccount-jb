@@ -28,4 +28,17 @@ public class AccountRepository implements AbstractRepository<Account> {
         });
         return futureTransaction.get();
     }
+
+    @Override
+    public void delete(String username) {
+        if (username == null) {
+            throw new IllegalArgumentException("Username must not be null.");
+        }
+
+        Firestore db = FirestoreClient.getFirestore();
+        CollectionReference collectionReference = db.collection("accounts");
+        DocumentReference documentReference = collectionReference.document(username);
+
+        documentReference.delete();
+    }
 }
