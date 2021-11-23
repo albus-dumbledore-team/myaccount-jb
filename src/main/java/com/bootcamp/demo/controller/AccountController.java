@@ -1,6 +1,7 @@
 package com.bootcamp.demo.controller;
 
 import com.bootcamp.demo.controller.dto.UpdatePasswordDTO;
+import com.bootcamp.demo.exception.ControllerException;
 import com.bootcamp.demo.exception.ServiceException;
 import com.bootcamp.demo.business.Service;
 import com.bootcamp.demo.model.Account;
@@ -26,6 +27,15 @@ public class AccountController {
             return ResponseEntity.ok().body(service.add(account));
         } catch (ServiceException exception) {
             return ResponseEntity.status(406).body(exception.getMessage());
+        }
+    }
+
+    @DeleteMapping("/deleteAccount/{username}")
+    public void delete(@PathVariable String username) throws ControllerException {
+        try {
+            service.delete(username);
+        } catch (ServiceException exception) {
+            throw new ControllerException(exception.getMessage());
         }
     }
 

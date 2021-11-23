@@ -1,4 +1,5 @@
 package com.bootcamp.demo.business;
+
 import com.bootcamp.demo.exception.ServiceException;
 import com.bootcamp.demo.data_access.AbstractRepository;
 import com.bootcamp.demo.model.Account;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -22,6 +24,7 @@ public class AccountService implements Service<Account> {
     public void setRepository(AbstractRepository<Account> repository) {
         this.repository = repository;
     }
+
     @Autowired
     public void setEncryptor(Encryptor encryptor) {
         this.encryptor = encryptor;
@@ -71,6 +74,10 @@ public class AccountService implements Service<Account> {
         }
     }
 
+    @Override
+    public void delete(String username) {
+        repository.delete(username);
+    }
 
     @Override
     public String updatePassword(String username, String oldPassword, String newPassword, String confirmNewPassword) throws ServiceException {
