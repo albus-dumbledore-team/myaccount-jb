@@ -6,6 +6,7 @@ import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.stereotype.Repository;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Repository
@@ -30,13 +31,48 @@ public class AccountRepository implements AbstractRepository<Account> {
     }
 
     @Override
+    public Account findOne(String username) throws ExecutionException, InterruptedException {
+        CollectionReference collectionReference = this.getAccountsCollection();
+        DocumentReference documentReference = collectionReference.document(username);
+        ApiFuture<DocumentSnapshot> future = documentReference.get();
+        DocumentSnapshot documentSnapshot = future.get();
+
+        if (documentSnapshot.exists()) {
+            Map<String, Object> data = documentSnapshot.getData();
+
+            String name = data.get("name").toString();
+            String email =  data.get("email").toString();
+            String phoneNumber =  data.get("phoneNumber").toString();
+            String address =  data.get("address").toString();
+            String dateOfBirth =  data.get("dateOfBirth").toString();
+
+            return new Account(name, email, username, null, phoneNumber, address, dateOfBirth);
+        }
+        return null;
+    }
+
+    @Override
+    public Account update(Account account) throws ExecutionException, InterruptedException {
+        CollectionReference collectionReference = this.getAccountsCollection();
+
+        DocumentReference documentReference = collectionReference.document(account.getUsername());
+        documentReference.set(account).get();
+
+        return this.findOne(account.getUsername());
+    }
+
+    private CollectionReference getAccountsCollection() {
+        Firestore db = FirestoreClient.getFirestore();
+        return db.collection("accounts");
+    }
+
+    @Override
     public void delete(String username) {
         if (username == null) {
             throw new IllegalArgumentException("Username must not be null.");
         }
 
-        Firestore db = FirestoreClient.getFirestore();
-        CollectionReference collectionReference = db.collection("accounts");
+        CollectionReference collectionReference = this.getAccountsCollection();
         DocumentReference documentReference = collectionReference.document(username);
 
         documentReference.delete();

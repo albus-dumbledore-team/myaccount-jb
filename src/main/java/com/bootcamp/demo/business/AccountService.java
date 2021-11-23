@@ -62,7 +62,6 @@ public class AccountService implements Service<Account> {
         Period period = Period.between(localDate, LocalDate.now());
 
         return (period.getYears() > 18);
-
     }
 
     public String add(final Account account) throws ServiceException {
@@ -72,6 +71,16 @@ public class AccountService implements Service<Account> {
         } catch (ExecutionException | InterruptedException exception) {
             throw new ServiceException(exception.getMessage());
         }
+    }
+
+    @Override
+    public Account findOne(String username) throws ServiceException, ExecutionException, InterruptedException {
+        return repository.findOne(username);
+    }
+
+    @Override
+    public Account update(Account account) throws ServiceException, ExecutionException, InterruptedException {
+        return repository.update(account);
     }
 
     @Override
