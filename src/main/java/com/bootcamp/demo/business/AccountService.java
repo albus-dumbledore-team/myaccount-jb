@@ -74,4 +74,8 @@ public class AccountService implements Service<Account> {
         }
     }
 
+    @Override
+    public void delete(String username) {
+        repository.delete(username);
+    }
 }

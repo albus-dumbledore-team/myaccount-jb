@@ -6,9 +6,7 @@ import com.bootcamp.demo.business.Service;
 import com.bootcamp.demo.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AccountController {
@@ -25,6 +23,15 @@ public class AccountController {
             return ResponseEntity.ok().body(service.add(account));
         } catch (ServiceException exception) {
             return ResponseEntity.status(406).body(exception.getMessage());
+        }
+    }
+
+    @DeleteMapping("/deleteAccount/{username}")
+    public void delete(@PathVariable String username) throws ControllerException {
+        try {
+            service.delete(username);
+        } catch (ServiceException exception) {
+            throw new ControllerException(exception.getMessage());
         }
     }
 }

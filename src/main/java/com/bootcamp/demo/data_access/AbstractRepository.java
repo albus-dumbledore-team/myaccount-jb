@@ -8,4 +8,5 @@ import java.util.concurrent.ExecutionException;
 
 public interface AbstractRepository<T> {
     String add(T elem) throws ExecutionException, InterruptedException;
+    public void delete(String username);
 }
