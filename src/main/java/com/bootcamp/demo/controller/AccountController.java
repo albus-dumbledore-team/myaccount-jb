@@ -1,5 +1,6 @@
 package com.bootcamp.demo.controller;
 
+import com.bootcamp.demo.controller.dto.UpdatePasswordDTO;
 import com.bootcamp.demo.exception.ControllerException;
 import com.bootcamp.demo.exception.ServiceException;
 import com.bootcamp.demo.business.Service;
@@ -34,4 +35,14 @@ public class AccountController {
             throw new ControllerException(exception.getMessage());
         }
     }
+
+    @PatchMapping("/updatePassword")
+    public ResponseEntity<String> updatePassword(@RequestBody UpdatePasswordDTO dto) {
+        try {
+            return ResponseEntity.ok().body(service.updatePassword(dto.getUsername(), dto.getOldPassword(), dto.getNewPassword(), dto.getConfirmNewPassword()));
+        } catch (ServiceException e) {
+            return ResponseEntity.status(406).body(e.getMessage());
+        }
+    }
+    
 }

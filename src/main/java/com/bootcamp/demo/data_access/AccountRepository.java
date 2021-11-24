@@ -4,8 +4,9 @@ import com.bootcamp.demo.model.Account;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Repository;
-
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 @Repository
@@ -40,5 +41,30 @@ public class AccountRepository implements AbstractRepository<Account> {
         DocumentReference documentReference = collectionReference.document(username);
 
         documentReference.delete();
+    }
+
+    @Override
+    public String updatePassword(String username, String oldPassword, String newPassword) throws Exception {
+        Firestore db = FirestoreClient.getFirestore();
+        CollectionReference collectionReference = db.collection("accounts");
+        DocumentReference documentReference = collectionReference.document(username);
+
+
+        ApiFuture<DocumentSnapshot> future = documentReference.get();
+        DocumentSnapshot documentSnapshot = future.get();
+
+        if(documentSnapshot.exists()) {
+            String dbOldPassword = Objects.requireNonNull(documentSnapshot.getData()).get("password").toString();
+
+            // checking if the provided oldPassword can generate a hash equal to the database hashed password
+            if(BCrypt.checkpw(oldPassword, dbOldPassword)){
+                documentReference.update("password", newPassword);
+                return "Password changed successfully";
+            }
+
+            throw new Exception("Incorrect old password");
+        }
+
+        return null;
     }
 }

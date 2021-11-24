@@ -11,7 +11,6 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -77,5 +76,21 @@ public class AccountService implements Service<Account> {
     @Override
     public void delete(String username) {
         repository.delete(username);
+    }
+
+    @Override
+    public String updatePassword(String username, String oldPassword, String newPassword, String confirmNewPassword) throws ServiceException {
+
+        if(!newPassword.equals(confirmNewPassword)){
+            throw new ServiceException("New password and Confirm new password field do not match");
+        }
+
+        String newPasswd = encryptor.encryptSHA256(newPassword);
+
+        try {
+            return repository.updatePassword(username, oldPassword, newPasswd);
+        } catch (Exception e) {
+            throw new ServiceException(e.getMessage());
+        }
     }
 }
