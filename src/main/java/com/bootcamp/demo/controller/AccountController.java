@@ -31,33 +31,23 @@ public class AccountController {
     }
 
     @PutMapping("/editAccount")
-    ResponseEntity<Account> update(@RequestBody AccountDetails accountDetails) throws ControllerException {
+    ResponseEntity<Account> update(@RequestBody AccountDetails accountDetails) throws Exception {
         try {
-            Account searchedAccount = service.findOne(accountDetails.getUsername());
+            Account account = new Account(
+                    accountDetails.getName(),
+                    accountDetails.getEmail(),
+                    accountDetails.getUsername(),
+                    null,
+                    accountDetails.getPhoneNumber(),
+                    accountDetails.getAddress(),
+                    accountDetails.getDateOfBirth()
+            );
 
-            if (searchedAccount != null) {
-                Account account = new Account(
-                        accountDetails.getName(),
-                        accountDetails.getEmail(),
-                        accountDetails.getUsername(),
-                        searchedAccount.getPassword(),
-                        accountDetails.getPhoneNumber(),
-                        accountDetails.getAddress(),
-                        accountDetails.getDateOfBirth()
-                );
-
-                if (!Objects.equals(searchedAccount.getEmail(), accountDetails.getEmail())) {
-                    // TODO: Find a solution to return the error message: "Email cannot be changed!"
-                    return ResponseEntity.status(400).body(null);
-                }
-
-                return  ResponseEntity.status(200).body(this.service.update(account));
-            }
-        } catch (ServiceException | InterruptedException | ExecutionException exception) {
-            throw new ControllerException(exception.getMessage());
+            return  ResponseEntity.status(200).body(this.service.update(account));
+        } catch (Exception exception) {
+            // TODO: Find a solution to return the error message: "Email cannot be changed!"
+            return ResponseEntity.status(400).body(null);
         }
-
-        return null;
     }
 
 

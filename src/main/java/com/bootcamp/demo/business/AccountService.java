@@ -4,6 +4,7 @@ import com.bootcamp.demo.exception.ServiceException;
 import com.bootcamp.demo.data_access.AbstractRepository;
 import com.bootcamp.demo.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +13,7 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 
@@ -79,8 +81,18 @@ public class AccountService implements Service<Account> {
     }
 
     @Override
-    public Account update(Account account) throws ServiceException, ExecutionException, InterruptedException {
-        return repository.update(account);
+    public Account update(Account account) throws Exception {
+        Account searchedAccount = this.findOne(account.getUsername());
+
+        if (!Objects.equals(searchedAccount.getEmail(), account.getEmail())) {
+            throw new Exception("Email cannot be changed!");
+        }
+
+        if (searchedAccount != null) {
+            return repository.update(account);
+        }
+
+        return null;
     }
 
     @Override
