@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class AccountController {
     private final Service<Account> service;
@@ -42,6 +44,15 @@ public class AccountController {
             return ResponseEntity.ok().body(service.updatePassword(dto.getUsername(), dto.getOldPassword(), dto.getNewPassword(), dto.getConfirmNewPassword()));
         } catch (ServiceException e) {
             return ResponseEntity.status(406).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/getAll")
+    ResponseEntity getAll() {
+        try {
+            return ResponseEntity.ok().body(service.getAll());
+        } catch (ServiceException exception) {
+            return ResponseEntity.status(406).body(exception.getMessage());
         }
     }
     
