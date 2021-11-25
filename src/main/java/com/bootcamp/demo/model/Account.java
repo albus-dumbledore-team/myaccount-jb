@@ -3,17 +3,11 @@ package com.bootcamp.demo.model;
 public class Account {
 
     private String name;
-
     private String email;
-
     private String username;
-
     private String password;
-
     private String phoneNumber;
-
     private String address;
-
     private String dateOfBirth;
 
     public Account(String name, String email, String username, String password, String phoneNumber, String address, String dateOfBirth) {
