@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -90,6 +91,14 @@ public class AccountService implements Service<Account> {
         try {
             return repository.updatePassword(username, oldPassword, newPasswd);
         } catch (Exception e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
+
+    public List<Account> getAll() throws ServiceException {
+        try {
+            return repository.getAll();
+        } catch (ExecutionException | InterruptedException e) {
             throw new ServiceException(e.getMessage());
         }
     }
