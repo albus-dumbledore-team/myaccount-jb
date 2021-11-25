@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 public class ValidationResponse {
     private ArrayList<String> messages;
-    private int errorCode;
+    private boolean errorCode;
 
     public ValidationResponse(){
         this.messages = new ArrayList<String>();
-        this.errorCode = 200;
+        this.errorCode = false;
     }
 
     public void addMessage(String message) {
@@ -26,11 +26,11 @@ public class ValidationResponse {
         this.messages = messages;
     }
 
-    public int getErrorCode() {
+    public boolean getErrorCode() {
         return errorCode;
     }
 
-    public void setErrorCode(int errorCode) {
+    public void setErrorCode(boolean errorCode) {
         this.errorCode = errorCode;
     }
 }
