@@ -3,7 +3,8 @@ import { Routes, Route} from "react-router-dom";
 import "./App.css";
 
 import AuthService from "./services/authService";
-import Register from "./components/register";
+import Register from "./components/createAccount";
+import CreateAccount from "./components/createAccount";
 
 class App extends Component {
   constructor(props) {
@@ -42,7 +43,7 @@ class App extends Component {
       <div>
         <div className="">
           <Routes>
-            <Route path="/register" element={<Register/>} />
+            <Route path="/createAccount" element={<CreateAccount/>} />
           </Routes>
         </div>
 
