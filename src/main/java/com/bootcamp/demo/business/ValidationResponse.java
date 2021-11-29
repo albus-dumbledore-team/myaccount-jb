@@ -4,15 +4,15 @@ import java.util.ArrayList;
 
 public class ValidationResponse {
     private ArrayList<String> messages;
-    private boolean errorCode;
+    private boolean isValid;
 
-    public ValidationResponse(){
+    public ValidationResponse() {
         this.messages = new ArrayList<String>();
-        this.errorCode = false;
+        this.isValid = false;
     }
 
     public void addMessage(String message) {
-        if(this.messages == null) {
+        if (this.messages == null) {
             this.messages = new ArrayList<String>();
         }
         this.messages.add(message);
@@ -26,11 +26,11 @@ public class ValidationResponse {
         this.messages = messages;
     }
 
-    public boolean getErrorCode() {
-        return errorCode;
+    public boolean getIsValid() {
+        return isValid;
     }
 
-    public void setErrorCode(boolean errorCode) {
-        this.errorCode = errorCode;
+    public void setIsValid(boolean errorCode) {
+        this.isValid = errorCode;
     }
 }
