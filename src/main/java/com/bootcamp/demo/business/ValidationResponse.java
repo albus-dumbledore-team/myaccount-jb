@@ -8,7 +8,7 @@ public class ValidationResponse {
 
     public ValidationResponse() {
         this.messages = new ArrayList<String>();
-        this.isValid = false;
+        this.isValid = true;
     }
 
     public void addMessage(String message) {

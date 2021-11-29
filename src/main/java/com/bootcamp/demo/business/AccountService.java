@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutionException;
 public class AccountService implements Service<Account> {
     AbstractRepository<Account> repository;
     Encryptor encryptor;
+    AccountValidation accountValidation = new AccountValidation();
 
     @Autowired
     public void setRepository(AbstractRepository<Account> repository) {
@@ -22,20 +23,15 @@ public class AccountService implements Service<Account> {
         this.encryptor = encryptor;
     }
 
-    public ValidationResponse accountValidation(Account account) {
-
-        AccountValidation accountValidation = new AccountValidation(account);
-        accountValidation.validate();
-        return accountValidation.getValidationResponse();
-    }
-
     public String add(final Account account) throws ServiceException {
         try {
             account.setPassword(encryptor.encryptSHA256(account.getPassword()));
-            if (!accountValidation(account).getIsValid())
+            ValidationResponse validationResponse = accountValidation.validate(account);
+            if(validationResponse.getIsValid()){
                 return repository.add(account);
+            }
             else {
-                throw new ServiceException(accountValidation(account).getMessages().toString());
+                throw new ServiceException(validationResponse.getMessages().toString());
             }
         } catch (ExecutionException | InterruptedException exception) {
             throw new ServiceException(exception.getMessage());
