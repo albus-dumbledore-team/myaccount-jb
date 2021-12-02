@@ -3,6 +3,7 @@ package com.bootcamp.demo.business;
 import com.bootcamp.demo.exception.ServiceException;
 import com.bootcamp.demo.data_access.AbstractRepository;
 import com.bootcamp.demo.model.Account;
+import com.bootcamp.demo.model.AccountDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
@@ -12,11 +13,12 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 
 @org.springframework.stereotype.Service
-public class AccountService implements Service<Account> {
+public class AccountService {
     AbstractRepository<Account> repository;
     Encryptor encryptor;
 
@@ -74,12 +76,29 @@ public class AccountService implements Service<Account> {
         }
     }
 
-    @Override
+
     public void delete(String username) {
         repository.delete(username);
     }
 
-    @Override
+    private AccountDetails createAccountDetails(final Account account){
+        return  new AccountDetails(account.getName(),account.getEmail(),account.getUsername()
+                ,account.getPhoneNumber(),account.getAddress(),account.getDateOfBirth());
+    }
+
+    public AccountDetails retrieve(String username) throws ServiceException {
+        try{
+            Optional<Account> account = repository.retrieve(username);
+            if(account.isPresent())
+            {
+                return createAccountDetails(account.get());
+            }
+            throw new ServiceException("Account not found");
+        } catch (ExecutionException | InterruptedException e) {
+            throw new ServiceException("INTERNAL");
+        }
+    }
+
     public String updatePassword(String username, String oldPassword, String newPassword, String confirmNewPassword) throws ServiceException {
 
         if(!newPassword.equals(confirmNewPassword)){
