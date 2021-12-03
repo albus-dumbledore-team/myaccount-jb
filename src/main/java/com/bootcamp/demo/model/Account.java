@@ -1,7 +1,6 @@
 package com.bootcamp.demo.model;
 
 public class Account {
-
     private String name;
     private String email;
     private String username;

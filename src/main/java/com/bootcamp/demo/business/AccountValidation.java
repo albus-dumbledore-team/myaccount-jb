@@ -13,71 +13,73 @@ import java.util.Date;
 
 public class AccountValidation {
 
-    private void nameValidator(String name, ValidationResponse validationResponse) {
+    private ValidationResponse validationResponse;
+
+    private void nameValidator(String name) {
         if (StringUtils.isEmpty(name)) {
-            validationResponse.addMessage("\nName field is empty");
+            this.validationResponse.addMessage("\nName field is empty");
         } else {
             final String nameExpression = "^([A-Z][a-z]*((\\s)))+[A-Z][a-z]*$";
             if (!name.matches(nameExpression)) {
-                validationResponse.addMessage("\nWrong name format: must contain only letters and must be \"FirstName LastName\"  ");
+                this.validationResponse.addMessage("\nWrong name format: must contain only letters and must be \"FirstName LastName\"  ");
             }
         }
     }
 
-    private void emailValidator(String email, ValidationResponse validationResponse) {
+    private void emailValidator(String email) {
         if (StringUtils.isEmpty(email)) {
-            validationResponse.addMessage("\nEmail field is empty");
+            this.validationResponse.addMessage("\nEmail field is empty");
         } else {
             final String emailExpression = "^(.+)@(.+)$";
             if (!email.matches(emailExpression)) {
-                validationResponse.addMessage("\nWrong email format");
+                this.validationResponse.addMessage("\nWrong email format");
             }
         }
     }
 
-    private void usernameValidator(String username, ValidationResponse validationResponse) {
+    private void usernameValidator(String username) {
         if (StringUtils.isEmpty(username)) {
-            validationResponse.addMessage("\nUsername field is empty");
+            this.validationResponse.addMessage("\nUsername field is empty");
         } else {
             final String userNameExpression = "[a-zA-Z0-9]*$";
             if (!username.matches(userNameExpression)) {
-                validationResponse.addMessage("\nWrong username format: must contain only digits and letter ");
+                this.validationResponse.addMessage("\nWrong username format: must contain only digits and letter ");
             }
         }
     }
 
-    private void passwordValidator(String password, ValidationResponse validationResponse) {
+    private void passwordValidator(String password) {
         if (StringUtils.isEmpty(password)) {
-            validationResponse.addMessage("\nPassword field is empty");
+            this.validationResponse.addMessage("\nPassword field is empty");
         }
     }
 
-    private void phoneNumberValidator(String phoneNumber, ValidationResponse validationResponse) {
+    private void phoneNumberValidator(String phoneNumber) {
         if (StringUtils.isEmpty(phoneNumber)) {
-            validationResponse.addMessage("\nPhoneNumber field is empty");
+            this.validationResponse.addMessage("\nPhoneNumber field is empty");
         } else if (phoneNumber.length() != 10) {
-            validationResponse.addMessage("\nWrong phoneNumber format: must have 10 digits ");
+            this.validationResponse.addMessage("\nWrong phoneNumber format: must have 10 digits ");
         } else {
             boolean match = Arrays.asList(phoneNumber.split(""))
                     .stream()
                     .allMatch(str -> str.matches("\\d+"));
             if (!match) {
-                validationResponse.addMessage("\nWrong phoneNumber format: must contain only digits ");
+                this.validationResponse.addMessage("\nWrong phoneNumber format: must contain only digits ");
             }
         }
     }
 
-    private void addressValidator(String address, ValidationResponse validationResponse) {
+    private void addressValidator(String address) {
         if (StringUtils.isEmpty(address)) {
-            validationResponse.addMessage("\nAddress field is empty");
+            this.validationResponse.addMessage("\nAddress field is empty");
         }
     }
 
-    private void dateOfBirthValidator(String dateOfBirth, ValidationResponse validationResponse) {
+    private void dateOfBirthValidator(String dateOfBirth) {
         if (StringUtils.isEmpty(dateOfBirth)) {
-            validationResponse.addMessage("\nDateOfBirth field is empty");
+            this.validationResponse.addMessage("\nDateOfBirth field is empty");
         } else if (dateOfBirth.length() != 10) {
-            validationResponse.addMessage("\nWrong dateOfBirth format: must be MM-dd-yyyy ");
+            this.validationResponse.addMessage("\nWrong dateOfBirth format: must be MM-dd-yyyy ");
         } else {
             String pattern = "MM-dd-yyyy";
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
@@ -86,10 +88,10 @@ public class AccountValidation {
                 LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 Period period = Period.between(localDate, LocalDate.now());
                 if (period.getYears() < 18) {
-                    validationResponse.addMessage("\nMinimum age must be 18 ");
+                    this.validationResponse.addMessage("\nMinimum age must be 18 ");
                 }
             } catch (ParseException e) {
-                validationResponse.addMessage("\nWrong dateOfBirth format: must be MM-dd-yyyy ");
+                this.validationResponse.addMessage("\nWrong dateOfBirth format: must be MM-dd-yyyy ");
                 e.printStackTrace();
             }
         }
@@ -97,21 +99,21 @@ public class AccountValidation {
 
     public ValidationResponse validate(Account account) {
 
-        ValidationResponse validationResponse = new ValidationResponse();
+        this.validationResponse = new ValidationResponse();
 
-        nameValidator(account.getName(), validationResponse);
-        usernameValidator(account.getUsername(), validationResponse);
-        emailValidator(account.getEmail(), validationResponse);
-        passwordValidator(account.getPassword(), validationResponse);
-        phoneNumberValidator(account.getPhoneNumber(), validationResponse);
-        addressValidator(account.getAddress(), validationResponse);
-        dateOfBirthValidator(account.getDateOfBirth(), validationResponse);
+        nameValidator(account.getName());
+        usernameValidator(account.getUsername());
+        emailValidator(account.getEmail());
+        passwordValidator(account.getPassword());
+        phoneNumberValidator(account.getPhoneNumber());
+        addressValidator(account.getAddress());
+        dateOfBirthValidator(account.getDateOfBirth());
 
-        if (!validationResponse.getMessages().isEmpty()) {
-            validationResponse.setIsValid(false);
+        if (!this.validationResponse.getMessages().isEmpty()) {
+            this.validationResponse.setIsValid(false);
         }
 
-        return validationResponse;
+        return this.validationResponse;
     }
 
 }
