@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,34 @@ public class AccountRepository implements AbstractRepository<Account> {
             }
         });
         return futureTransaction.get();
+    }
+
+    @Override
+    public Optional<Account> retrieve(String username) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+        CollectionReference collectionReference = db.collection("accounts");
+        DocumentReference documentReference = collectionReference.document(username);
+        ApiFuture<DocumentSnapshot> future = documentReference.get();
+        DocumentSnapshot documentSnapshot = future.get();
+        if (documentSnapshot.exists())
+            return Optional.ofNullable(documentSnapshot.toObject(Account.class));
+        return Optional.empty();
+    }
+
+    private CollectionReference getAccountsCollection() {
+        Firestore db = FirestoreClient.getFirestore();
+        return db.collection("accounts");
+    }
+
+    public void update(Account account) throws ExecutionException, InterruptedException, Exception {
+        CollectionReference collectionReference = this.getAccountsCollection();
+        DocumentReference documentReference = collectionReference.document(account.getUsername());
+        if(documentReference.get().get().exists()){
+            documentReference.set(account);
+        }
+        else {
+            throw new Exception("Account does not exist!");
+        }
     }
 
     @Override
