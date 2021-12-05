@@ -1,10 +1,12 @@
 package com.bootcamp.demo.controller;
 
+import com.bootcamp.demo.business.AccountService;
 import com.bootcamp.demo.controller.dto.UpdatePasswordDTO;
 import com.bootcamp.demo.exception.ControllerException;
 import com.bootcamp.demo.exception.ServiceException;
 import com.bootcamp.demo.business.Service;
 import com.bootcamp.demo.model.Account;
+import com.bootcamp.demo.model.AccountDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +15,10 @@ import java.util.List;
 
 @RestController
 public class AccountController {
-    private final Service<Account> service;
+    private final AccountService service;
 
     @Autowired
-    public AccountController(Service<Account> service) {
+    public AccountController(AccountService service) {
         this.service = service;
     }
 
@@ -31,11 +33,7 @@ public class AccountController {
 
     @DeleteMapping("/deleteAccount/{username}")
     public void delete(@PathVariable String username) throws ControllerException {
-        try {
-            service.delete(username);
-        } catch (ServiceException exception) {
-            throw new ControllerException(exception.getMessage());
-        }
+        service.delete(username);
     }
 
     @PatchMapping("/updatePassword")
@@ -55,5 +53,14 @@ public class AccountController {
             return ResponseEntity.status(406).body(exception.getMessage());
         }
     }
-    
+    @GetMapping("/viewAccount/{username}")
+    @ResponseBody
+    public ResponseEntity viewAccount(@PathVariable String username) throws ControllerException {
+        try {
+            return ResponseEntity.ok(service.retrieve(username));
+        } catch (ServiceException exception) {
+            return ResponseEntity.status(406).body(exception.getMessage());
+
+        }
+    }
 }
