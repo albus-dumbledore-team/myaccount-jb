@@ -1,29 +1,23 @@
 package com.bootcamp.demo.business;
 
-import com.bootcamp.demo.data_access.AbstractRepository;
-import com.bootcamp.demo.data_access.AccountRepository;
 import com.bootcamp.demo.exception.ServiceException;
+import com.bootcamp.demo.data_access.AbstractRepository;
 import com.bootcamp.demo.model.Account;
 import com.bootcamp.demo.model.AccountDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
-import java.util.Date;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-
 
 @org.springframework.stereotype.Service
 public class AccountService {
-    AccountRepository repository;
+    AbstractRepository<Account> repository;
     Encryptor encryptor;
+    AccountValidation accountValidation = new AccountValidation();
 
     @Autowired
-    public void setRepository(AccountRepository repository) {
+    public void setRepository(AbstractRepository<Account> repository) {
         this.repository = repository;
     }
 
@@ -32,100 +26,65 @@ public class AccountService {
         this.encryptor = encryptor;
     }
 
-    public boolean accountValidation(Account account) {
-        if (account.getName().isEmpty() || account.getPassword().isEmpty() || account.getEmail().isEmpty() || account.getUsername().isEmpty() || account.getAddress().isEmpty() || account.getPhoneNumber().isEmpty() || account.getDateOfBirth().isEmpty())
-            return false;
-
-        String expression = "^([A-Z][a-z]*((\\s)))+[A-Z][a-z]*$";
-        if (!account.getName().matches(expression))
-            return false;
-
-        expression = "[a-zA-Z0-9]*$";
-        if (!account.getUsername().matches(expression))
-            return false;
-
-        if (account.getPhoneNumber().length() != 10)
-            return false;
-
-        for (char c : account.getPhoneNumber().toCharArray()) {
-            if (!Character.isDigit(c))
-                return false;
-        }
-
-        String pattern = "MM-dd-yyyy";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        Date date = null;
-        try {
-            date = simpleDateFormat.parse(account.getDateOfBirth());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        Period period = Period.between(localDate, LocalDate.now());
-
-        return (period.getYears() > 18);
-    }
-
     public String add(final Account account) throws ServiceException {
         try {
             account.setPassword(encryptor.encryptSHA256(account.getPassword()));
-            return repository.add(account);
+            ValidationResponse validationResponse = accountValidation.validate(account);
+            if(validationResponse.getIsValid()){
+                return repository.add(account);
+            }
+            else {
+                throw new ServiceException(validationResponse.getMessages().toString());
+            }
         } catch (ExecutionException | InterruptedException exception) {
             throw new ServiceException(exception.getMessage());
         }
     }
 
-    public Account findOne(String username) throws ServiceException, ExecutionException, InterruptedException {
-        return repository.findOne(username);
+    public void delete(String username) {
+        repository.delete(username);
     }
 
 
-    public void update(AccountDetails account) throws ServiceException {
-        Account transformAccount = this.transformAccount(account);
-
-        if (accountValidation(transformAccount)) {
-            try {
-                repository.update(transformAccount);
-            } catch (InterruptedException | ExecutionException e) {
-                throw new ServiceException(e.getMessage());
+    public AccountDetails retrieve(String username) throws ServiceException {
+        try{
+            Optional<Account> account = repository.retrieve(username);
+            if(account.isPresent())
+            {
+                return createAccountDetails(account.get());
             }
-        } else {
-            throw new ServiceException("Validation error");
+            throw new ServiceException("Account not found");
+        } catch (ExecutionException | InterruptedException e) {
+            throw new ServiceException("INTERNAL");
         }
     }
 
-    public Account transformAccount(AccountDetails accountDetails) throws ServiceException {
+
+    public String updatePassword(String username, String oldPassword, String newPassword, String confirmNewPassword) throws ServiceException {
+
+        if(!newPassword.equals(confirmNewPassword)){
+            throw new ServiceException("New password and Confirm new password field do not match");
+        }
+
+        String newPasswd = encryptor.encryptSHA256(newPassword);
+
         try {
-            Account searchedAccount = repository.findOne(accountDetails.getUsername());
+            return repository.updatePassword(username, oldPassword, newPasswd);
+        } catch (Exception e) {
+            throw new ServiceException(e.getMessage());
+        }
+    }
 
-            if (accountDetails.getName() != searchedAccount.getName()) {
-                searchedAccount.setName(accountDetails.getName());
-            }
-
-            if (!Objects.equals(accountDetails.getEmail(), searchedAccount.getEmail())) {
-                throw new ServiceException("Email cannot be changed!");
-            }
-
-            if (accountDetails.getDateOfBirth() != searchedAccount.getDateOfBirth()) {
-                searchedAccount.setDateOfBirth(accountDetails.getDateOfBirth());
-            }
-
-            if (accountDetails.getAddress() != searchedAccount.getAddress()) {
-                searchedAccount.setAddress(accountDetails.getAddress());
-            }
-
-            if (accountDetails.getPhoneNumber() != searchedAccount.getPhoneNumber()) {
-                searchedAccount.setPhoneNumber(accountDetails.getPhoneNumber());
-            }
-
-            return searchedAccount;
+    public List<Account> getAll() throws ServiceException {
+        try {
+            return repository.getAll();
         } catch (ExecutionException | InterruptedException e) {
             throw new ServiceException(e.getMessage());
         }
-
     }
 
-    public void delete(String username) throws ServiceException {
-        repository.delete(username);
+    private AccountDetails createAccountDetails(final Account account){
+        return  new AccountDetails(account.getName(),account.getEmail(),account.getUsername()
+                ,account.getPhoneNumber(),account.getAddress(),account.getDateOfBirth());
     }
 }

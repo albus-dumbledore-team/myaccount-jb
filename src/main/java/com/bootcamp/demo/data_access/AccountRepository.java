@@ -4,12 +4,18 @@ import com.bootcamp.demo.model.Account;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Repository
-public class AccountRepository {
+public class AccountRepository implements AbstractRepository<Account> {
     public String add(Account account) throws ExecutionException, InterruptedException {
         //checks if an account with the same username doesn't already exists and adds the new account
         Firestore db = FirestoreClient.getFirestore();
@@ -29,38 +35,64 @@ public class AccountRepository {
         return futureTransaction.get();
     }
 
-    public Account findOne(String username) throws ExecutionException, InterruptedException {
-        CollectionReference collectionReference = this.getAccountsCollection();
+    @Override
+    public Optional<Account> retrieve(String username) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+        CollectionReference collectionReference = db.collection("accounts");
         DocumentReference documentReference = collectionReference.document(username);
         ApiFuture<DocumentSnapshot> future = documentReference.get();
         DocumentSnapshot documentSnapshot = future.get();
-
-        return documentSnapshot.toObject(Account.class);
+        if (documentSnapshot.exists())
+            return Optional.ofNullable(documentSnapshot.toObject(Account.class));
+        return Optional.empty();
     }
 
-    public Account update(Account account) throws ExecutionException, InterruptedException {
-        CollectionReference collectionReference = this.getAccountsCollection();
-
-        DocumentReference documentReference = collectionReference.document(account.getUsername());
-        documentReference.set(account);
-
-        return this.findOne(account.getUsername());
-    }
-
-    private CollectionReference getAccountsCollection() {
-        Firestore db = FirestoreClient.getFirestore();
-        return db.collection("accounts");
-    }
-
-
+    @Override
     public void delete(String username) {
         if (username == null) {
             throw new IllegalArgumentException("Username must not be null.");
         }
 
-        CollectionReference collectionReference = this.getAccountsCollection();
+        Firestore db = FirestoreClient.getFirestore();
+        CollectionReference collectionReference = db.collection("accounts");
         DocumentReference documentReference = collectionReference.document(username);
 
         documentReference.delete();
+    }
+
+    @Override
+    public String updatePassword(String username, String oldPassword, String newPassword) throws Exception {
+        Firestore db = FirestoreClient.getFirestore();
+        CollectionReference collectionReference = db.collection("accounts");
+        DocumentReference documentReference = collectionReference.document(username);
+
+
+        ApiFuture<DocumentSnapshot> future = documentReference.get();
+        DocumentSnapshot documentSnapshot = future.get();
+
+        if(documentSnapshot.exists()) {
+            String dbOldPassword = Objects.requireNonNull(documentSnapshot.getData()).get("password").toString();
+
+            // checking if the provided oldPassword can generate a hash equal to the database hashed password
+            if(BCrypt.checkpw(oldPassword, dbOldPassword)){
+                documentReference.update("password", newPassword);
+                return "Password changed successfully";
+            }
+
+            throw new Exception("Incorrect old password");
+        }
+
+        return null;
+    }
+
+    public List<Account> getAll() throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+        ApiFuture<QuerySnapshot> query = db.collection("accounts").get();
+        QuerySnapshot querySnapshot = query.get();
+        return querySnapshot.getDocuments()
+                .stream()
+                .filter(QueryDocumentSnapshot::exists)
+                .map(element-> element.toObject(Account.class))
+                .collect(Collectors.toList());
     }
 }
