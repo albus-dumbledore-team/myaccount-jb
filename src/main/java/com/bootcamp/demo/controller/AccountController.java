@@ -32,7 +32,7 @@ public class AccountController {
     }
 
     @DeleteMapping("/deleteAccount/{username}")
-    public void delete(@PathVariable String username) throws ControllerException {
+    public void delete(@PathVariable String username){
         service.delete(username);
     }
 
@@ -63,4 +63,15 @@ public class AccountController {
 
         }
     }
+
+    @PutMapping("/editAccount")
+    public ResponseEntity<String> update(@RequestBody AccountDetails accountDetails)  {
+        try {
+            service.update(accountDetails);
+            return ResponseEntity.status(200).body("Successfully updated.");
+        } catch (ServiceException exception) {
+            return ResponseEntity.status(400).body(exception.getMessage());
+        }
+    }
+
 }

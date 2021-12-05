@@ -7,6 +7,7 @@ import com.bootcamp.demo.model.AccountDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -87,4 +88,60 @@ public class AccountService {
         return  new AccountDetails(account.getName(),account.getEmail(),account.getUsername()
                 ,account.getPhoneNumber(),account.getAddress(),account.getDateOfBirth());
     }
+    public Account transformAccount(AccountDetails accountDetails) throws ServiceException {
+        try {
+            Optional<Account> account =  repository.retrieve(accountDetails.getUsername());
+            if(account.isEmpty())
+            {
+                throw new ServiceException("Account does not exist!");
+            }
+            Account searchedAccount = account.get();
+
+            if (!Objects.equals(accountDetails.getName(), searchedAccount.getName())) {
+                searchedAccount.setName(accountDetails.getName());
+            }
+
+            if (!Objects.equals(accountDetails.getEmail(), searchedAccount.getEmail())) {
+                throw new ServiceException("Email cannot be changed!");
+            }
+
+            if (!Objects.equals(accountDetails.getDateOfBirth(), searchedAccount.getDateOfBirth())) {
+                searchedAccount.setDateOfBirth(accountDetails.getDateOfBirth());
+            }
+
+            if (!Objects.equals(accountDetails.getAddress(), searchedAccount.getAddress())) {
+                searchedAccount.setAddress(accountDetails.getAddress());
+            }
+
+            if (!Objects.equals(accountDetails.getPhoneNumber(), searchedAccount.getPhoneNumber())) {
+                searchedAccount.setPhoneNumber(accountDetails.getPhoneNumber());
+            }
+
+            return searchedAccount;
+        } catch (ExecutionException | InterruptedException e) {
+            throw new ServiceException(e.getMessage());
+        }
+
+    }
+
+    public void update(AccountDetails account) throws ServiceException {
+        Account transformedAccount = this.transformAccount(account);
+        ValidationResponse validationResponse = accountValidation.validate(transformedAccount);
+        if (validationResponse.getIsValid()) {
+            try {
+                repository.update(transformedAccount);
+            } catch (InterruptedException | ExecutionException e) {
+                //internal
+                throw new ServiceException(e.getMessage());
+            }
+            catch(Exception e){
+                //validation
+                throw new ServiceException("Validation: "+e.getMessage());
+            }
+        } else {
+            throw new ServiceException(validationResponse.getMessages().toString());
+        }
+    }
+
+
 }
