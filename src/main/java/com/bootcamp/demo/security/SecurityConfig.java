@@ -16,6 +16,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             .antMatchers("/public/**").permitAll()
             .antMatchers("/actuator/health").permitAll()
+            .antMatchers("/addAccount").permitAll()
             .anyRequest().authenticated()
             .and()
             .formLogin()
@@ -26,6 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .logout()
             .permitAll();
         http.csrf().disable();
+        http.cors();
     }
 
     @Override

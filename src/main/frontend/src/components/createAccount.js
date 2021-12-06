@@ -17,7 +17,7 @@ const required = value => {
     }
   };
 
-export default class Register extends Component {
+export default class CreateAccount extends Component {
   constructor(props) {
     super(props);
     this.handleRegister = this.handleRegister.bind(this);
@@ -106,7 +106,7 @@ export default class Register extends Component {
       ).then(
         response => {
           this.setState({
-            message: response.data.message,
+            message: response.data,
             successful: true
           });
         },

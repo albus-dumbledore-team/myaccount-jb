@@ -3,7 +3,6 @@ import { Routes, Route} from "react-router-dom";
 import "./App.css";
 
 import AuthService from "./services/authService";
-import Register from "./components/createAccount";
 import CreateAccount from "./components/createAccount";
 
 class App extends Component {

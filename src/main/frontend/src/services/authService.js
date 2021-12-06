@@ -2,6 +2,12 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080/";
 
+let config = {
+  headers: {
+    'Content-Type': 'application/json',
+  }
+}
+
 class AuthService {
   login(username, password) {
     return axios
@@ -24,25 +30,16 @@ class AuthService {
 
   register(name, username, email, password, phoneNumber, address, dateOfBirth) {
     console.log("calling /addAccount");
-    return axios.post(API_URL + "addAccount", {
-      name,
-      email,
-      username,
-      password,
-      phoneNumber,
-      address,
-      dateOfBirth,
-    },
-    {
-      headers: {
-        // Overwrite Axios's automatically set Content-Type
-        'Content-Type': 'application/json'
-      }
-    })
-    .then( response => {
-        //localStorage.setItem("user", JSON.stringify(response.data));
-        console.log(response.data);
-    });
+    let data = {
+      "name": name,
+      "email": email,
+      "username": username,
+      "password": password,
+      "phoneNumber": phoneNumber,
+      "address": address,
+      "dateOfBirth": dateOfBirth,
+    }
+    return axios.post(API_URL + "addAccount", data, config);
   }
 
   getCurrentUser() {
