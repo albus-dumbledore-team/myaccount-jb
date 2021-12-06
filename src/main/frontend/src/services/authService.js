@@ -9,14 +9,7 @@ let config = {
 }
 
 
-
-
-
 class AuthService {
-
-  viewAccount(username){
-    return axios.get(API_URL+"/viewAccount/"+username);
-  }
 
   logout() {
     localStorage.removeItem("user");
@@ -29,7 +22,9 @@ class AuthService {
                 + '-' + ((dateOfBirth.getDate() > 9) ? 
                       dateOfBirth.getDate() : ('0' + dateOfBirth.getDate()))
                 + '-' + dateOfBirth.getFullYear();
+                
     console.log(date);
+
     let data = {
       "name": name,
       "email": email,
@@ -39,12 +34,8 @@ class AuthService {
       "address": address,
       "dateOfBirth": date,
     }
+
     return axios.post(API_URL + "addAccount", data, config);
-    // .catch(error => {
-    //   console.error(error);
-    //   console.log(error.response.data)
-    //   return error.response;
-    // });
   }
 
   getCurrentUser() {
