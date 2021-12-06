@@ -8,6 +8,10 @@ let config = {
   }
 }
 
+
+
+
+
 class AuthService {
 
   logout() {
@@ -16,6 +20,12 @@ class AuthService {
 
   register(name, username, email, password, phoneNumber, address, dateOfBirth) {
     console.log("calling /addAccount");
+    let date = ((dateOfBirth.getMonth() > 8) ? 
+                      (dateOfBirth.getMonth() + 1) : ('0' + (dateOfBirth.getMonth() + 1)))
+                + '-' + ((dateOfBirth.getDate() > 9) ? 
+                      dateOfBirth.getDate() : ('0' + dateOfBirth.getDate()))
+                + '-' + dateOfBirth.getFullYear();
+    console.log(date);
     let data = {
       "name": name,
       "email": email,
@@ -23,7 +33,7 @@ class AuthService {
       "password": password,
       "phoneNumber": phoneNumber,
       "address": address,
-      "dateOfBirth": dateOfBirth,
+      "dateOfBirth": date,
     }
     return axios.post(API_URL + "addAccount", data, config);
   }

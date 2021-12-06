@@ -80,7 +80,7 @@ export default class CreateAccount extends Component {
 
   onChangeDateOfBirth(e) {
     this.setState({
-      dateOfBirth: e.target.value
+      dateOfBirth: e
     });
   }
 
@@ -102,7 +102,8 @@ export default class CreateAccount extends Component {
         this.state.email,
         this.state.password,
         this.state.phoneNumber,
-        this.state.dateOfBirth.toLocaleDateString("en-US"),
+        this.state.address,
+        this.state.dateOfBirth,
       ).then(
         response => {
           this.setState({
@@ -202,8 +203,20 @@ export default class CreateAccount extends Component {
                 </div>
 
                 <div className="form-group">
+                  <label htmlFor="address">Address:</label>
+                  <Input
+                    type="text"
+                    className="form-control"
+                    name="address"
+                    value={this.state.address}
+                    onChange={this.onChangeAddress}
+                    validations={[required]}
+                  />
+                </div>
+
+                <div className="form-group">
                     <label htmlFor="datePicker">Birthdate:</label>
-                    <DatePicker selected={this.state.dateOfBirth} onChange={this.onChangeDateOfBirth} />
+                    <DatePicker selected={this.state.dateOfBirth} onChange={(newDate) => this.setState({dateOfBirth: newDate})} />
                 </div>
 
                 <div className="form-group-btn">
