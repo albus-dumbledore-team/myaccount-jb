@@ -36,6 +36,11 @@ class AuthService {
       "dateOfBirth": date,
     }
     return axios.post(API_URL + "addAccount", data, config);
+    // .catch(error => {
+    //   console.error(error);
+    //   console.log(error.response.data)
+    //   return error.response;
+    // });
   }
 
   getCurrentUser() {

@@ -17,6 +17,57 @@ const required = value => {
     }
   };
 
+const vname = value => {
+  if (value.length < 3 || value.length > 20 || !/^[a-zA-Z ]+$/.test(value)) {
+    return (
+      <div className="alert alert-danger" role="alert">
+        The name must contain at least 3 letters
+      </div>
+    );
+  }
+};
+
+const vusername = value => {
+  if (value.length < 3 || value.length > 20) {
+    return (
+      <div className="alert alert-danger" role="alert">
+        The username must be between 3 and 20 characters.
+      </div>
+    );
+  }
+};
+
+const vpassword = value => {
+  if (value.length < 6 || value.length > 40) {
+    return (
+      <div className="alert alert-danger" role="alert">
+        The password must be between 6 and 40 characters.
+      </div>
+    );
+  }
+};
+  
+const vphonenumber = value => {
+  if (!/^07[[0-9]{8}$/.test(value)) {
+    return (
+      <div className="alert alert-danger" role="alert">
+        Invalid phone number.
+      </div>
+    );
+  }
+};
+  
+const vaddress = value => {
+  if (value.length < 3 || !/^[a-zA-Z0-9. ]{3,}$/.test(value)) {
+    return (
+      <div className="alert alert-danger" role="alert">
+        Invalid address
+      </div>
+    );
+  }
+};
+
+
 export default class CreateAccount extends Component {
   constructor(props) {
     super(props);
@@ -85,17 +136,18 @@ export default class CreateAccount extends Component {
   }
 
   handleRegister(e) {
+    console.log("handleRegister")
     e.preventDefault();
 
     this.setState({
-      message: "",
+      message: '',
       successful: false
     });
 
     this.form.validateAll();
     console.log(this.state.dateOfBirth.toLocaleDateString("en-US"));
+    console.log("message length", this.state.message.length);
 
-    if (this.state.message.length === 0) {
       AuthService.register(
         this.state.name,
         this.state.username,
@@ -112,20 +164,16 @@ export default class CreateAccount extends Component {
           });
         },
         error => {
-          const resMessage =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString();
+          console.log("Create account error");
+          console.log(error);
 
           this.setState({
             successful: false,
-            message: resMessage
+            message: error.response.data
           });
+          
         }
       );
-    }
   }
 
   render() {
@@ -150,7 +198,7 @@ export default class CreateAccount extends Component {
                     name="name"
                     value={this.state.name}
                     onChange={this.onChangeName}
-                    validations={[required]}
+                    validations={[required, vname]}
                   />
                 </div>
 
@@ -162,7 +210,7 @@ export default class CreateAccount extends Component {
                     name="username"
                     value={this.state.username}
                     onChange={this.onChangeUsername}
-                    validations={[required]}
+                    validations={[required, vusername]}
                   />
                 </div>
 
@@ -186,7 +234,7 @@ export default class CreateAccount extends Component {
                     name="password"
                     value={this.state.password}
                     onChange={this.onChangePassword}
-                    validations={[required]}
+                    validations={[required, vpassword]}
                   />
                 </div>
 
@@ -198,7 +246,7 @@ export default class CreateAccount extends Component {
                     name="phoneNumber"
                     value={this.state.phoneNumber}
                     onChange={this.onChangePhoneNumber}
-                    validations={[required]}
+                    validations={[required, vphonenumber]}
                   />
                 </div>
 
@@ -210,7 +258,7 @@ export default class CreateAccount extends Component {
                     name="address"
                     value={this.state.address}
                     onChange={this.onChangeAddress}
-                    validations={[required]}
+                    validations={[required, vaddress]}
                   />
                 </div>
 
@@ -220,7 +268,8 @@ export default class CreateAccount extends Component {
                 </div>
 
                 <div className="form-group-btn">
-                  <button className="btnCreateAccount btn-primary btn-block">Create account</button>
+                  <button className="btnCreateAccount btn-primary">Create account</button>
+                  {/* <input type="button" className="btnCreateAccount btn-primary" value="Create account" onClick={this.handleRegister}/> */}
                 </div>
               </div>
             )}
