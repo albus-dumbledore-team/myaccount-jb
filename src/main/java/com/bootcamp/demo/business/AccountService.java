@@ -15,7 +15,9 @@ import java.util.concurrent.ExecutionException;
 public class AccountService {
     AbstractRepository<Account> repository;
     Encryptor encryptor;
+
     AccountValidation accountValidation = new AccountValidation();
+
 
     @Autowired
     public void setRepository(AbstractRepository<Account> repository) {
@@ -43,20 +45,28 @@ public class AccountService {
     public String add(final Account account) throws ServiceException {
         try {
             account.setPassword(encryptor.encryptSHA256(account.getPassword()));
-            ValidationResponse validationResponse = accountValidation.validate(account);
-            if(validationResponse.getIsValid()){
+            ValidationResponse accountValidation = this.accountValidation.validate(account);
+            if(accountValidation.getIsValid()){
                 return repository.add(account);
             }
             else {
-                throw new ServiceException(ErrorCode.VALIDATION, validationResponse.getMessages().toString());
+                throw new ServiceException(ErrorCode.VALIDATION, accountValidation.getMessages().toString());
             }
         } catch (ExecutionException | InterruptedException exception) {
             throw new ServiceException(ErrorCode.INTERNAL, exception.getMessage());
         }
     }
 
-    public void delete(String username) {
-        repository.delete(username);
+    public void delete(String username) throws ServiceException {
+        try{
+            repository.delete(username);
+
+        } catch (ExecutionException | InterruptedException e) {
+            throw new ServiceException(ErrorCode.INTERNAL, e.getMessage());
+        }
+        catch(IllegalArgumentException exception){
+            throw new ServiceException(ErrorCode.VALIDATION, exception.getMessage());
+        }
     }
 
 

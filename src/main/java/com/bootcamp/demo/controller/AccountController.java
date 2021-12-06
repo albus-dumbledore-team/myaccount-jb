@@ -31,7 +31,7 @@ public class AccountController {
     }
 
     @PostMapping("/addAccount")
-    ResponseEntity<String> add(@RequestBody Account account) {
+    public ResponseEntity<String> add(@RequestBody Account account) {
         try {
             return ResponseEntity.ok().body(service.add(account));
         } catch (ServiceException exception) {
@@ -40,8 +40,13 @@ public class AccountController {
     }
 
     @DeleteMapping("/deleteAccount/{username}")
-    public void delete(@PathVariable String username){
-        service.delete(username);
+    public ResponseEntity<String> delete(@PathVariable String username){
+        try {
+            service.delete(username);
+            return ResponseEntity.ok().body("Account deleted successfully");
+        } catch (ServiceException e) {
+            return createResponse(e);
+        }
     }
 
     @PatchMapping("/updatePassword")
@@ -54,7 +59,7 @@ public class AccountController {
     }
 
     @PostMapping("/getAll")
-    ResponseEntity getAll() {
+    public ResponseEntity getAll() {
         try {
             return ResponseEntity.ok().body(service.getAll());
         } catch (ServiceException exception) {

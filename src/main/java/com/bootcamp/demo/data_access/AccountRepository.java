@@ -64,7 +64,7 @@ public class AccountRepository implements AbstractRepository<Account> {
     }
 
     @Override
-    public void delete(String username) {
+    public void delete(String username) throws ExecutionException, InterruptedException, IllegalArgumentException {
         if (username == null) {
             throw new IllegalArgumentException("Username must not be null.");
         }
@@ -72,7 +72,9 @@ public class AccountRepository implements AbstractRepository<Account> {
         Firestore db = FirestoreClient.getFirestore();
         CollectionReference collectionReference = db.collection("accounts");
         DocumentReference documentReference = collectionReference.document(username);
-
+        if(!documentReference.get().get().exists()){
+            throw new IllegalArgumentException("Account not found");
+        }
         documentReference.delete();
     }
 
