@@ -6,8 +6,13 @@ import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Repository
 public class AccountRepository implements AbstractRepository<Account> {
@@ -28,6 +33,18 @@ public class AccountRepository implements AbstractRepository<Account> {
             }
         });
         return futureTransaction.get();
+    }
+
+    @Override
+    public Optional<Account> retrieve(String username) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+        CollectionReference collectionReference = db.collection("accounts");
+        DocumentReference documentReference = collectionReference.document(username);
+        ApiFuture<DocumentSnapshot> future = documentReference.get();
+        DocumentSnapshot documentSnapshot = future.get();
+        if (documentSnapshot.exists())
+            return Optional.ofNullable(documentSnapshot.toObject(Account.class));
+        return Optional.empty();
     }
 
     @Override
@@ -66,5 +83,16 @@ public class AccountRepository implements AbstractRepository<Account> {
         }
 
         return null;
+    }
+
+    public List<Account> getAll() throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+        ApiFuture<QuerySnapshot> query = db.collection("accounts").get();
+        QuerySnapshot querySnapshot = query.get();
+        return querySnapshot.getDocuments()
+                .stream()
+                .filter(QueryDocumentSnapshot::exists)
+                .map(element-> element.toObject(Account.class))
+                .collect(Collectors.toList());
     }
 }

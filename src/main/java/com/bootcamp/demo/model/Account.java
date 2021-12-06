@@ -1,7 +1,5 @@
 package com.bootcamp.demo.model;
 
-import javax.validation.constraints.*;
-
 public class Account {
     private String name;
     private String email;
