@@ -14,6 +14,10 @@ let config = {
 
 class AuthService {
 
+  viewAccount(username){
+    return axios.get(API_URL+"/viewAccount/"+username);
+  }
+
   logout() {
     localStorage.removeItem("user");
   }

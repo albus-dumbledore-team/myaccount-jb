@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import AuthService from "../services/authService";
-import "../styles/register.css"
+import "../styles/createAccount.css"
 
 const required = value => {
     if (!value) {
