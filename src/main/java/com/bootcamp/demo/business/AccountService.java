@@ -27,6 +27,19 @@ public class AccountService {
         this.encryptor = encryptor;
     }
 
+    public enum ErrorCode{
+        INTERNAL(1),
+        VALIDATION(2);
+        private final int errorCode;
+        ErrorCode(int i) {
+            this.errorCode = i;
+        }
+
+        public int getErrorCode() {
+            return errorCode;
+        }
+    }
+
     public String add(final Account account) throws ServiceException {
         try {
             account.setPassword(encryptor.encryptSHA256(account.getPassword()));
@@ -35,10 +48,10 @@ public class AccountService {
                 return repository.add(account);
             }
             else {
-                throw new ServiceException(validationResponse.getMessages().toString());
+                throw new ServiceException(ErrorCode.VALIDATION, validationResponse.getMessages().toString());
             }
         } catch (ExecutionException | InterruptedException exception) {
-            throw new ServiceException(exception.getMessage());
+            throw new ServiceException(ErrorCode.INTERNAL, exception.getMessage());
         }
     }
 
@@ -54,9 +67,9 @@ public class AccountService {
             {
                 return createAccountDetails(account.get());
             }
-            throw new ServiceException("Account not found");
+            throw new ServiceException(ErrorCode.VALIDATION, "Account not found");
         } catch (ExecutionException | InterruptedException e) {
-            throw new ServiceException("INTERNAL");
+            throw new ServiceException(ErrorCode.INTERNAL, e.getMessage());
         }
     }
 
@@ -64,7 +77,7 @@ public class AccountService {
     public String updatePassword(String username, String oldPassword, String newPassword, String confirmNewPassword) throws ServiceException {
 
         if(!newPassword.equals(confirmNewPassword)){
-            throw new ServiceException("New password and Confirm new password field do not match");
+            throw new ServiceException(ErrorCode.VALIDATION,"New password and Confirm new password field do not match");
         }
 
         String newPasswd = encryptor.encryptSHA256(newPassword);
@@ -72,7 +85,7 @@ public class AccountService {
         try {
             return repository.updatePassword(username, oldPassword, newPasswd);
         } catch (Exception e) {
-            throw new ServiceException(e.getMessage());
+            throw new ServiceException(ErrorCode.VALIDATION,e.getMessage());
         }
     }
 
@@ -80,7 +93,7 @@ public class AccountService {
         try {
             return repository.getAll();
         } catch (ExecutionException | InterruptedException e) {
-            throw new ServiceException(e.getMessage());
+            throw new ServiceException(ErrorCode.INTERNAL, e.getMessage());
         }
     }
 
@@ -93,7 +106,7 @@ public class AccountService {
             Optional<Account> account =  repository.retrieve(accountDetails.getUsername());
             if(account.isEmpty())
             {
-                throw new ServiceException("Account does not exist!");
+                throw new ServiceException(ErrorCode.VALIDATION, "Account does not exist!");
             }
             Account searchedAccount = account.get();
 
@@ -102,7 +115,7 @@ public class AccountService {
             }
 
             if (!Objects.equals(accountDetails.getEmail(), searchedAccount.getEmail())) {
-                throw new ServiceException("Email cannot be changed!");
+                throw new ServiceException(ErrorCode.VALIDATION, "Email cannot be changed!");
             }
 
             if (!Objects.equals(accountDetails.getDateOfBirth(), searchedAccount.getDateOfBirth())) {
@@ -119,7 +132,7 @@ public class AccountService {
 
             return searchedAccount;
         } catch (ExecutionException | InterruptedException e) {
-            throw new ServiceException(e.getMessage());
+            throw new ServiceException(ErrorCode.INTERNAL, e.getMessage());
         }
 
     }
@@ -131,15 +144,13 @@ public class AccountService {
             try {
                 repository.update(transformedAccount);
             } catch (InterruptedException | ExecutionException e) {
-                //internal
-                throw new ServiceException(e.getMessage());
+                throw new ServiceException(ErrorCode.INTERNAL, e.getMessage());
             }
             catch(Exception e){
-                //validation
-                throw new ServiceException("Validation: "+e.getMessage());
+                throw new ServiceException(ErrorCode.VALIDATION, e.getMessage());
             }
         } else {
-            throw new ServiceException(validationResponse.getMessages().toString());
+            throw new ServiceException(ErrorCode.VALIDATION, validationResponse.getMessages().toString());
         }
     }
 
