@@ -46,7 +46,7 @@ public class AccountController {
         }
     }
 
-    @PostMapping("/getAll")
+    @GetMapping("/getAll")
     ResponseEntity getAll() {
         try {
             return ResponseEntity.ok().body(service.getAll());
