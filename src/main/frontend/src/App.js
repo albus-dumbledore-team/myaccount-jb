@@ -4,7 +4,6 @@ import "./App.css";
 
 import AuthService from "./services/authService";
 import CreateAccount from "./components/createAccount";
-import ViewAccount from "./components/viewAccount";
 
 class App extends Component {
   constructor(props) {
@@ -44,7 +43,6 @@ class App extends Component {
         <div className="">
           <Routes>
             <Route path="/createAccount" element={<CreateAccount/>} />
-            <Route path="/myaccount" element={<ViewAccount/>} />
           </Routes>
         </div>
 
