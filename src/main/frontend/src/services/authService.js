@@ -8,6 +8,10 @@ let config = {
   }
 }
 
+
+
+
+
 class AuthService {
 
   viewAccount(username){
