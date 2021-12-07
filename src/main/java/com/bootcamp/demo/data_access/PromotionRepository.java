@@ -12,9 +12,11 @@ import java.util.concurrent.ExecutionException;
 
 @Repository
 public class PromotionRepository {
+    private final String promotionsPath = "promotions";
     private CollectionReference getDb() {
-        return FirestoreClient.getFirestore().collection("promotions");
+        return FirestoreClient.getFirestore().collection(promotionsPath);
     }
+
 
     public String addPromotion(Promotion promotion) throws ExecutionException, InterruptedException {
         DocumentReference docRef = getDb().document(promotion.getCode());
@@ -22,11 +24,10 @@ public class PromotionRepository {
         //use transaction to make the operation atomic
         ApiFuture<String> futureTransaction = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot snapshot = transaction.get(docRef).get();
-            if(snapshot.exists()){
-                throw new Exception(String.format("A promotion with the same code {%s} already exists!",snapshot.getId()));
-            }
-            else {
-                Transaction writeResult =transaction.set(docRef,promotion);
+            if (snapshot.exists()) {
+                throw new Exception(String.format("A promotion with the same code {%s} already exists!", snapshot.getId()));
+            } else {
+                Transaction writeResult = transaction.set(docRef, promotion);
                 return "Promotion created successfully";
             }
         });
@@ -47,7 +48,7 @@ public class PromotionRepository {
         DocumentReference promotionReference = getDb().document(code);
         ApiFuture<Promotion> futureTransation = FirestoreClient.getFirestore().runTransaction(transaction -> {
             DocumentSnapshot snapshot = transaction.get(promotionReference).get();
-            if(!snapshot.exists()){
+            if (!snapshot.exists()) {
                 throw new Exception("Promotion code is invalid");
             }
             Promotion promotion = snapshot.toObject(Promotion.class);
@@ -55,12 +56,11 @@ public class PromotionRepository {
             return promotion;
         });
         Promotion result = futureTransation.get();
-        if(result == null){
+        if (result == null) {
             return Optional.empty();
         }
         return Optional.of(result);
     }
-
 
 
 }

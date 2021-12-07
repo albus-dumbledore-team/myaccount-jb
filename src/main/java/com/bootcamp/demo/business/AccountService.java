@@ -16,6 +16,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
+import static com.bootcamp.demo.exception.ServiceException.ErrorCode;
+
 @org.springframework.stereotype.Service
 public class AccountService {
     AccountRepository repository;
@@ -25,7 +27,7 @@ public class AccountService {
     AccountValidation accountValidation = new AccountValidation();
 
     @Autowired
-    public void setPromotionRepository(PromotionRepository promotionRepository){
+    public void setPromotionRepository(PromotionRepository promotionRepository) {
         this.promotionRepository = promotionRepository;
     }
 
@@ -43,49 +45,45 @@ public class AccountService {
         try {
             account.setPassword(encryptor.encryptSHA256(account.getPassword()));
             ValidationResponse accountValidation = this.accountValidation.validate(account);
-            if(accountValidation.getIsValid()){
+            if (accountValidation.getIsValid()) {
                 return repository.add(account);
-            }
-            else {
-                throw new ServiceException(ServiceException.ErrorCode.VALIDATION, accountValidation.getMessages().toString());
+            } else {
+                throw new ServiceException(ErrorCode.VALIDATION, accountValidation.getMessages().toString());
             }
         } catch (ExecutionException | InterruptedException exception) {
-            throw new ServiceException(ServiceException.ErrorCode.INTERNAL, exception.getMessage());
+            throw new ServiceException(ErrorCode.INTERNAL, exception.getMessage());
         }
     }
 
     public void delete(String username) throws ServiceException {
-        try{
+        try {
             repository.delete(username);
 
         } catch (ExecutionException | InterruptedException e) {
-            throw new ServiceException(ServiceException.ErrorCode.INTERNAL, e.getMessage());
-        }
-        catch(IllegalArgumentException exception){
-            throw new ServiceException(ServiceException.ErrorCode.VALIDATION, exception.getMessage());
+            throw new ServiceException(ErrorCode.INTERNAL, e.getMessage());
+        } catch (IllegalArgumentException exception) {
+            throw new ServiceException(ErrorCode.VALIDATION, exception.getMessage());
         }
     }
 
 
     public AccountDetails retrieve(String username) throws ServiceException {
-        try{
+        try {
             Optional<Account> account = repository.retrieve(username);
-            if(account.isPresent())
-            {
-//                System.out.println(account.get().getPromotions());
+            if (account.isPresent()) {
                 return createAccountDetails(account.get());
             }
-            throw new ServiceException(ServiceException.ErrorCode.VALIDATION, "Account not found");
+            throw new ServiceException(ErrorCode.VALIDATION, "Account not found");
         } catch (ExecutionException | InterruptedException e) {
-            throw new ServiceException(ServiceException.ErrorCode.INTERNAL, e.getMessage());
+            throw new ServiceException(ErrorCode.INTERNAL, e.getMessage());
         }
     }
 
 
     public String updatePassword(String username, String oldPassword, String newPassword, String confirmNewPassword) throws ServiceException {
 
-        if(!newPassword.equals(confirmNewPassword)){
-            throw new ServiceException(ServiceException.ErrorCode.VALIDATION,"New password and Confirm new password field do not match");
+        if (!newPassword.equals(confirmNewPassword)) {
+            throw new ServiceException(ErrorCode.VALIDATION, "New password and Confirm new password field do not match");
         }
 
         String newPasswd = encryptor.encryptSHA256(newPassword);
@@ -93,7 +91,7 @@ public class AccountService {
         try {
             return repository.updatePassword(username, oldPassword, newPasswd);
         } catch (Exception e) {
-            throw new ServiceException(ServiceException.ErrorCode.VALIDATION,e.getMessage());
+            throw new ServiceException(ErrorCode.VALIDATION, e.getMessage());
         }
     }
 
@@ -101,20 +99,23 @@ public class AccountService {
         try {
             return repository.getAll();
         } catch (ExecutionException | InterruptedException e) {
-            throw new ServiceException(ServiceException.ErrorCode.INTERNAL, e.getMessage());
+            throw new ServiceException(ErrorCode.INTERNAL, e.getMessage());
         }
     }
 
-    private AccountDetails createAccountDetails(final Account account){
-        return  new AccountDetails(account.getName(),account.getEmail(),account.getUsername()
-                ,account.getPhoneNumber(),account.getAddress(),account.getDateOfBirth());
+    private AccountDetails createAccountDetails(final Account account) {
+        return new AccountDetails(account.getName(), account.getEmail(), account.getUsername()
+                , account.getPhoneNumber(), account.getAddress(), account.getDateOfBirth());
     }
+
+    /**
+     * Modifies an account with the fields that are different from accountDetails and returns it
+     */
     public Account transformAccount(AccountDetails accountDetails) throws ServiceException {
         try {
-            Optional<Account> account =  repository.retrieve(accountDetails.getUsername());
-            if(account.isEmpty())
-            {
-                throw new ServiceException(ServiceException.ErrorCode.VALIDATION, "Account does not exist!");
+            Optional<Account> account = repository.retrieve(accountDetails.getUsername());
+            if (account.isEmpty()) {
+                throw new ServiceException(ErrorCode.VALIDATION, "Account does not exist!");
             }
             Account searchedAccount = account.get();
 
@@ -123,7 +124,7 @@ public class AccountService {
             }
 
             if (!Objects.equals(accountDetails.getEmail(), searchedAccount.getEmail())) {
-                throw new ServiceException(ServiceException.ErrorCode.VALIDATION, "Email cannot be changed!");
+                throw new ServiceException(ErrorCode.VALIDATION, "Email cannot be changed!");
             }
 
             if (!Objects.equals(accountDetails.getDateOfBirth(), searchedAccount.getDateOfBirth())) {
@@ -140,7 +141,7 @@ public class AccountService {
 
             return searchedAccount;
         } catch (ExecutionException | InterruptedException e) {
-            throw new ServiceException(ServiceException.ErrorCode.INTERNAL, e.getMessage());
+            throw new ServiceException(ErrorCode.INTERNAL, e.getMessage());
         }
 
     }
@@ -152,43 +153,38 @@ public class AccountService {
             try {
                 repository.update(transformedAccount);
             } catch (InterruptedException | ExecutionException e) {
-                throw new ServiceException(ServiceException.ErrorCode.INTERNAL, e.getMessage());
-            }
-            catch(Exception e){
-                throw new ServiceException(ServiceException.ErrorCode.VALIDATION, e.getMessage());
+                throw new ServiceException(ErrorCode.INTERNAL, e.getMessage());
+            } catch (Exception e) {
+                throw new ServiceException(ErrorCode.VALIDATION, e.getMessage());
             }
         } else {
-            throw new ServiceException(ServiceException.ErrorCode.VALIDATION, validationResponse.getMessages().toString());
+            throw new ServiceException(ErrorCode.VALIDATION, validationResponse.getMessages().toString());
         }
     }
 
     public void addPromotionToAccount(String accountId, String code) throws ServiceException {
-        try{
-            Optional<Promotion> promotionOptional = this.promotionRepository.popPromotion(code);
-            if(promotionOptional.isEmpty()){
-                throw new ServiceException(ServiceException.ErrorCode.VALIDATION, "Invalid code");
+        try {
+            Optional<Promotion> promotion = this.promotionRepository.popPromotion(code);
+            if (promotion.isEmpty()) {
+                throw new ServiceException(ErrorCode.VALIDATION, "Invalid code");
             }
-            this.repository.addPromotionToAccount(accountId, promotionOptional.get());
+            this.repository.addPromotionToAccount(accountId, promotion.get());
         } catch (ExecutionException | InterruptedException e) {
-            throw new ServiceException(ServiceException.ErrorCode.INTERNAL, e.getMessage());
-        }
-        catch(Exception exception)
-        {
-            throw new ServiceException(ServiceException.ErrorCode.VALIDATION, exception.getMessage());
+            throw new ServiceException(ErrorCode.INTERNAL, e.getMessage());
+        } catch (Exception exception) {
+            throw new ServiceException(ErrorCode.VALIDATION, exception.getMessage());
         }
     }
 
-    public List<Promotion> getAccountPromotions(String accountId) throws ServiceException{
-        try{
+    public List<Promotion> getAccountPromotions(String accountId) throws ServiceException {
+        try {
             Optional<Account> account = repository.retrieve(accountId);
-            if(account.isPresent())
-            {
-//                System.out.println(account.get().getPromotions());
+            if (account.isPresent()) {
                 return account.get().getPromotions();
             }
-            throw new ServiceException(ServiceException.ErrorCode.VALIDATION, "Account not found");
+            throw new ServiceException(ErrorCode.VALIDATION, "Account not found");
         } catch (ExecutionException | InterruptedException e) {
-            throw new ServiceException(ServiceException.ErrorCode.INTERNAL, e.getMessage());
+            throw new ServiceException(ErrorCode.INTERNAL, e.getMessage());
         }
 
     }

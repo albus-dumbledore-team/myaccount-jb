@@ -1,37 +1,55 @@
 package com.bootcamp.demo.model;
 
 public class Promotion {
+    private String code;
+    private int amount;
+    private Availability state;
+    private DiscountType type;
+
+    public enum Availability {
+        ACTIVE,
+        SUSPENDED,
+        EXPIRED
+    }
+
+    public enum DiscountType {
+        FLAT,
+        PERCENTAGE
+    }
+
+    public Promotion(String code, int amount, Availability state, DiscountType type) {
+        this.code = code;
+        this.amount = amount;
+        this.state = state;
+        this.type = type;
+    }
+
+    public Promotion() {
+    }
+
     public String getCode() {
         return code;
     }
 
-    private String code;
-    private int amount;
-    private boolean isFlatAmount;
-    private boolean enabled;
-
-    public Promotion(String code, int amount, boolean enabled, boolean isFlatAmount) {
-        this.code = code;
-        this.amount = amount;
-        this.enabled = enabled;
-        this.isFlatAmount = isFlatAmount;
+    public Availability getState() {
+        return state;
     }
-    public Promotion(){}
+
+    public void setState(Availability state) {
+        this.state = state;
+    }
+
+    public DiscountType getType() {
+        return type;
+    }
+
+    public void setType(DiscountType type) {
+        this.type = type;
+    }
 
     public int getAmount() {
         return amount;
     }
 
-    public boolean isFlatAmount() {
-        return isFlatAmount;
-    }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-    public void setFlatAmount(boolean flatAmount){this.isFlatAmount = flatAmount;}
 }

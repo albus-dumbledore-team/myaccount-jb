@@ -24,11 +24,9 @@ public class Account {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.dateOfBirth = dateOfBirth;
-//        promotions = new ArrayList<>();
-        addPromotion(new Promotion("1234",1,true,true));
     }
 
-    public Account(){
+    public Account() {
 
     }
 
@@ -88,10 +86,11 @@ public class Account {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public void addPromotion(Promotion promotion){
+    public void addPromotion(Promotion promotion) {
         this.promotions.add(promotion);
     }
-    public List<Promotion> getPromotions(){
+
+    public List<Promotion> getPromotions() {
         return this.promotions;
     }
 }
