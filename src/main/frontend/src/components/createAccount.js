@@ -3,6 +3,7 @@ import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import CheckButton from "react-validation/build/button";
 
 import AuthService from "../services/authService";
 import "../styles/createAccount.css"
@@ -25,23 +26,41 @@ const vname = value => {
       </div>
     );
   }
+
+  if (!/^([A-Z][a-z]*((\s)))+[A-Z][a-z]*$/.test(value)) {
+    return (
+      <div className="alert alert-danger" role="alert">
+        Wrong name format: must be "FirstName LastName"
+      </div>
+    );
+  }
 };
 
 const vusername = value => {
   if (value.length < 3 || value.length > 20) {
     return (
       <div className="alert alert-danger" role="alert">
-        The username must be between 3 and 20 characters.
+        The username must be between 3 and 20 characters
       </div>
     );
   }
 };
 
+const vemail = value => {
+  if (!/^(.+)@(.+)$/.test(value)) {
+    return (
+      <div className="alert alert-danger" role="alert">
+        Invalid email
+      </div>
+    );
+  }
+}
+
 const vpassword = value => {
   if (value.length < 6 || value.length > 40) {
     return (
       <div className="alert alert-danger" role="alert">
-        The password must be between 6 and 40 characters.
+        The password must be between 6 and 40 characters
       </div>
     );
   }
@@ -51,7 +70,7 @@ const vphonenumber = value => {
   if (!/^07[[0-9]{8}$/.test(value)) {
     return (
       <div className="alert alert-danger" role="alert">
-        Invalid phone number.
+        Invalid phone number
       </div>
     );
   }
@@ -141,13 +160,12 @@ export default class CreateAccount extends Component {
 
     this.setState({
       message: '',
-      successful: false
+      successful: false,
     });
 
     this.form.validateAll();
-    console.log(this.state.dateOfBirth.toLocaleDateString("en-US"));
     console.log("message length", this.state.message.length);
-
+    if (this.checkBtn.context._errors.length === 0)
       AuthService.register(
         this.state.name,
         this.state.username,
@@ -222,7 +240,7 @@ export default class CreateAccount extends Component {
                     name="email"
                     value={this.state.email}
                     onChange={this.onChangeEmail}
-                    validations={[required]}
+                    validations={[required, vemail]}
                   />
                 </div>
 
@@ -288,6 +306,12 @@ export default class CreateAccount extends Component {
                 </div>
               </div>
             )}
+            <CheckButton
+              style={{ display: "none" }}
+              ref={c => {
+                this.checkBtn = c;
+              }}
+            />
           </Form>
         </div>
       </div>
