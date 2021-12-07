@@ -13,19 +13,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
-            .antMatchers("/public/**").permitAll()
-            .antMatchers("/actuator/health").permitAll()
-            .antMatchers("/addAccount").permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .formLogin()
-            .loginPage("/login")
-            .failureUrl("/login-error")
-            .permitAll()
-            .and()
-            .logout()
-            .permitAll();
+                .authorizeRequests()
+                .antMatchers("/public/**").permitAll()
+                .antMatchers("/actuator/health").permitAll()
+                .antMatchers("/addAccount").permitAll()
+                .antMatchers("/editAccount").permitAll()
+                .antMatchers("/viewAccount/*").permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .formLogin()
+                .loginPage("/login")
+                .failureUrl("/login-error")
+                .permitAll()
+                .and()
+                .logout()
+                .permitAll();
         http.csrf().disable();
         http.cors();
     }
