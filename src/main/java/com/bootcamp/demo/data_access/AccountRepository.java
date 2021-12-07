@@ -1,6 +1,7 @@
 package com.bootcamp.demo.data_access;
 
 import com.bootcamp.demo.model.Account;
+import com.bootcamp.demo.model.Promotion;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
@@ -15,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Repository
-public class AccountRepository implements AbstractRepository<Account> {
+public class AccountRepository {
     public String add(Account account) throws ExecutionException, InterruptedException {
         //checks if an account with the same username doesn't already exists and adds the new account
         Firestore db = FirestoreClient.getFirestore();
@@ -35,7 +36,7 @@ public class AccountRepository implements AbstractRepository<Account> {
         return futureTransaction.get();
     }
 
-    @Override
+
     public Optional<Account> retrieve(String username) throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
         CollectionReference collectionReference = db.collection("accounts");
@@ -63,7 +64,7 @@ public class AccountRepository implements AbstractRepository<Account> {
         }
     }
 
-    @Override
+
     public void delete(String username) throws ExecutionException, InterruptedException, IllegalArgumentException {
         if (username == null) {
             throw new IllegalArgumentException("Username must not be null.");
@@ -78,7 +79,7 @@ public class AccountRepository implements AbstractRepository<Account> {
         documentReference.delete();
     }
 
-    @Override
+
     public String updatePassword(String username, String oldPassword, String newPassword) throws Exception {
         Firestore db = FirestoreClient.getFirestore();
         CollectionReference collectionReference = db.collection("accounts");
@@ -112,5 +113,14 @@ public class AccountRepository implements AbstractRepository<Account> {
                 .filter(QueryDocumentSnapshot::exists)
                 .map(element-> element.toObject(Account.class))
                 .collect(Collectors.toList());
+    }
+
+    public void addPromotionToAccount(String accountId, Promotion promotion) throws ExecutionException, InterruptedException, IllegalArgumentException {
+        DocumentReference accountReference = FirestoreClient.getFirestore().collection("accounts").document(accountId);
+        if(!accountReference.get().get().exists()){
+            throw new IllegalArgumentException("Account does not exist");
+        }
+        ApiFuture<WriteResult> union = accountReference.update("promotions", FieldValue.arrayUnion(promotion));
+        System.out.println(union.get().toString());
     }
 }

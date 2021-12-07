@@ -5,10 +5,13 @@ import com.bootcamp.demo.controller.dto.UpdatePasswordDTO;
 import com.bootcamp.demo.exception.ServiceException;
 import com.bootcamp.demo.model.Account;
 import com.bootcamp.demo.model.AccountDetails;
+import com.bootcamp.demo.model.Promotion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class AccountController {
@@ -23,8 +26,8 @@ public class AccountController {
         HttpHeaders customHeaders = new HttpHeaders();
         customHeaders.add("ErrorCode",s.getErrorCode().toString());
         customHeaders.add("ErrorValue",Integer.toString(s.getErrorCode().getErrorCode()));
-        AccountService.ErrorCode errorCode = s.getErrorCode();
-        if (errorCode == AccountService.ErrorCode.INTERNAL) {
+        ServiceException.ErrorCode errorCode = s.getErrorCode();
+        if (errorCode == ServiceException.ErrorCode.INTERNAL) {
             return ResponseEntity.status(500).headers(customHeaders).body(s.getMessage());
         }
         else return ResponseEntity.status(406).headers(customHeaders).body(s.getMessage());
@@ -66,6 +69,7 @@ public class AccountController {
             return createResponse(exception);
         }
     }
+
     @GetMapping("/viewAccount/{username}")
     @ResponseBody
     public ResponseEntity viewAccount(@PathVariable String username){
@@ -82,6 +86,27 @@ public class AccountController {
         try {
             service.update(accountDetails);
             return ResponseEntity.status(200).body("Successfully updated.");
+        } catch (ServiceException exception) {
+            return createResponse(exception);
+        }
+    }
+
+    @PutMapping("/addPromotionToAccount{accountId} / {code}")
+    public ResponseEntity<String> addPromotionToAccount(@PathVariable String accountId, @PathVariable String code)
+    {
+        try {
+            service.addPromotionToAccount(accountId, code);
+            return ResponseEntity.status(200).body("Successfully added.");
+        } catch (ServiceException exception) {
+            return createResponse(exception);
+        }
+    }
+
+    @GetMapping("/viewAccountPromotions/{username}")
+    @ResponseBody
+    public ResponseEntity viewAccountPromotions(@PathVariable String username){
+        try {
+            return ResponseEntity.ok(service.getAccountPromotions(username));
         } catch (ServiceException exception) {
             return createResponse(exception);
         }

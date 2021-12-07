@@ -1,5 +1,10 @@
 package com.bootcamp.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Account {
     private String name;
     private String email;
@@ -8,6 +13,8 @@ public class Account {
     private String phoneNumber;
     private String address;
     private String dateOfBirth;
+    @JsonIgnore
+    private ArrayList<Promotion> promotions = new ArrayList<>();
 
     public Account(String name, String email, String username, String password, String phoneNumber, String address, String dateOfBirth) {
         this.name = name;
@@ -17,6 +24,8 @@ public class Account {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.dateOfBirth = dateOfBirth;
+//        promotions = new ArrayList<>();
+        addPromotion(new Promotion("1234",1,true,true));
     }
 
     public Account(){
@@ -77,5 +86,12 @@ public class Account {
 
     public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public void addPromotion(Promotion promotion){
+        this.promotions.add(promotion);
+    }
+    public List<Promotion> getPromotions(){
+        return this.promotions;
     }
 }
