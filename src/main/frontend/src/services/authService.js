@@ -2,20 +2,16 @@ import axios from "axios";
 
 const API_URL = "http://localhost:8080/";
 
-class AuthService {
-  login(username, password) {
-    return axios
-      .post(API_URL + "signin", {
-        username,
-        password
-      })
-      .then(response => {
-        if (response.data.accessToken) {
-          localStorage.setItem("user", JSON.stringify(response.data));
-        }
+let config = {
+  headers: {
+    'Content-Type': 'application/json',
+  }
+}
 
-        return response.data;
-      });
+class AuthService {
+
+  viewAccount(username){
+    return axios.get(API_URL+"/viewAccount/"+username);
   }
 
   logout() {
@@ -24,25 +20,27 @@ class AuthService {
 
   register(name, username, email, password, phoneNumber, address, dateOfBirth) {
     console.log("calling /addAccount");
-    return axios.post(API_URL + "addAccount", {
-      name,
-      email,
-      username,
-      password,
-      phoneNumber,
-      address,
-      dateOfBirth,
-    },
-    {
-      headers: {
-        // Overwrite Axios's automatically set Content-Type
-        'Content-Type': 'application/json'
-      }
-    })
-    .then( response => {
-        //localStorage.setItem("user", JSON.stringify(response.data));
-        console.log(response.data);
-    });
+    let date = ((dateOfBirth.getMonth() > 8) ?
+        (dateOfBirth.getMonth() + 1) : ('0' + (dateOfBirth.getMonth() + 1)))
+        + '-' + ((dateOfBirth.getDate() > 9) ?
+            dateOfBirth.getDate() : ('0' + dateOfBirth.getDate()))
+        + '-' + dateOfBirth.getFullYear();
+    console.log(date);
+    let data = {
+      "name": name,
+      "email": email,
+      "username": username,
+      "password": password,
+      "phoneNumber": phoneNumber,
+      "address": address,
+      "dateOfBirth": date,
+    }
+    return axios.post(API_URL + "addAccount", data, config);
+    // .catch(error => {
+    //   console.error(error);
+    //   console.log(error.response.data)
+    //   return error.response;
+    // });
   }
 
   getCurrentUser() {

@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { Routes, Route} from "react-router-dom";
 import "./App.css";
-
 import AuthService from "./services/authService";
 import Register from "./components/createAccount";
 import CreateAccount from "./components/createAccount";
+import ViewAccount from "./components/viewAccount";
 
 class App extends Component {
   constructor(props) {
@@ -27,7 +27,6 @@ class App extends Component {
         currentUser: user,
       });
     }
-    
   }
 
   logOut() {
@@ -44,6 +43,7 @@ class App extends Component {
         <div className="">
           <Routes>
             <Route path="/createAccount" element={<CreateAccount/>} />
+            <Route path="/myaccount" element={<ViewAccount/>} />
           </Routes>
         </div>
 
