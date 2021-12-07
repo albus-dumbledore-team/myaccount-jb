@@ -20,6 +20,8 @@ public class PromotionService {
 
     public String add(Promotion promotion) throws ServiceException {
         try{
+            if(!promotion.isFlatAmount() && promotion.getAmount() >=100)
+                throw new ServiceException(ServiceException.ErrorCode.VALIDATION, "Promotion discount percentage cannot exceed 99.99");
             return repository.addPromotion(promotion);
         } catch (ExecutionException | InterruptedException e) {
             throw new ServiceException(ServiceException.ErrorCode.INTERNAL, e.getMessage());
