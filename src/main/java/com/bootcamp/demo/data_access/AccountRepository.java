@@ -47,8 +47,24 @@ public class AccountRepository implements AbstractRepository<Account> {
         return Optional.empty();
     }
 
+    private CollectionReference getAccountsCollection() {
+        Firestore db = FirestoreClient.getFirestore();
+        return db.collection("accounts");
+    }
+
+    public void update(Account account) throws ExecutionException, InterruptedException, Exception {
+        CollectionReference collectionReference = this.getAccountsCollection();
+        DocumentReference documentReference = collectionReference.document(account.getUsername());
+        if(documentReference.get().get().exists()){
+            documentReference.set(account);
+        }
+        else {
+            throw new Exception("Account does not exist!");
+        }
+    }
+
     @Override
-    public void delete(String username) {
+    public void delete(String username) throws ExecutionException, InterruptedException, IllegalArgumentException {
         if (username == null) {
             throw new IllegalArgumentException("Username must not be null.");
         }
@@ -56,7 +72,9 @@ public class AccountRepository implements AbstractRepository<Account> {
         Firestore db = FirestoreClient.getFirestore();
         CollectionReference collectionReference = db.collection("accounts");
         DocumentReference documentReference = collectionReference.document(username);
-
+        if(!documentReference.get().get().exists()){
+            throw new IllegalArgumentException("Account not found");
+        }
         documentReference.delete();
     }
 
