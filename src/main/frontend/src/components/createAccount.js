@@ -36,16 +36,6 @@ const vname = value => {
   }
 };
 
-const vusername = value => {
-  if (value.length < 3 || value.length > 20) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        The username must be between 3 and 20 characters
-      </div>
-    );
-  }
-};
-
 const vemail = value => {
   if (!/^(.+)@(.+)$/.test(value)) {
     return (
@@ -91,7 +81,6 @@ export default class CreateAccount extends Component {
   constructor(props) {
     super(props);
     this.handleRegister = this.handleRegister.bind(this);
-    this.onChangeUsername = this.onChangeUsername.bind(this);
     this.onChangeName = this.onChangeName.bind(this);
     this.onChangeEmail = this.onChangeEmail.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
@@ -115,12 +104,6 @@ export default class CreateAccount extends Component {
   onChangeName(e) {
     this.setState({
       name: e.target.value
-    });
-  }
-
-  onChangeUsername(e) {
-    this.setState({
-      username: e.target.value
     });
   }
 
@@ -168,7 +151,6 @@ export default class CreateAccount extends Component {
     if (this.checkBtn.context._errors.length === 0)
       AuthService.register(
         this.state.name,
-        this.state.username,
         this.state.email,
         this.state.password,
         this.state.phoneNumber,
@@ -217,18 +199,6 @@ export default class CreateAccount extends Component {
                     value={this.state.name}
                     onChange={this.onChangeName}
                     validations={[required, vname]}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="username">Username:</label>
-                  <Input
-                    type="text"
-                    className="form-control"
-                    name="username"
-                    value={this.state.username}
-                    onChange={this.onChangeUsername}
-                    validations={[required, vusername]}
                   />
                 </div>
 
