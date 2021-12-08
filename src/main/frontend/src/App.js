@@ -1,5 +1,7 @@
-import React, {Component} from "react";
-import {Routes, Route} from "react-router-dom";
+import React, { Component } from "react";
+import { Routes, Route, Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 import "./App.css";
 import AuthService from "./services/authService";
 import CreateAccount from "./components/createAccount";
@@ -11,7 +13,7 @@ class App extends Component {
         this.logOut = this.logOut.bind(this);
 
         this.state = {
-            currentUser: {username: ""},
+            currentUser: { username: "" },
             Navigate: null,
         };
     }
@@ -20,7 +22,7 @@ class App extends Component {
     componentDidMount() {
         const user = AuthService.getCurrentUser();
 
-        if (!user) this.setState({Navigate: "/login"});
+        if (!user) this.setState({ Navigate: "/login" });
 
         if (user) {
             this.setState({
@@ -39,13 +41,26 @@ class App extends Component {
     render() {
 
         return (
-            <div>
-                <div className="">
+            <div className="mainDiv">
+                <nav className="navbar navbar-expand navbar-dark bg-dark">
+                        <div className="navbar-nav ml-auto">
+                            <li className="nav-item">
+                                <Link to={"/createaccount"} className="nav-link">
+                                    Create account
+                                </Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to={"/myaccount"} className="nav-link">
+                                    My account
+                                </Link>
+                            </li>
+                        </div>
+                </nav>
+
                     <Routes>
-                        <Route path="/createAccount" element={<CreateAccount/>}/>
-                        <Route path="/myaccount" element={<ViewAccount/>}/>
+                        <Route path="/createAccount" element={<CreateAccount />} />
+                        <Route path="/myaccount" element={<ViewAccount />} />
                     </Routes>
-                </div>
 
             </div>
         );

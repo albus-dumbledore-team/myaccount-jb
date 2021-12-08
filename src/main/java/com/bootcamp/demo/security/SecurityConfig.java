@@ -18,6 +18,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/actuator/health").permitAll()
                 .antMatchers("/addAccount").permitAll()
                 .antMatchers("/viewAccount/**").permitAll()
+                .antMatchers("/register").permitAll()
+                .antMatchers("/viewMyAccount/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()

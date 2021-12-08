@@ -1,6 +1,7 @@
 package com.bootcamp.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ public class Account {
     private String password;
     private String phoneNumber;
     private String address;
+    @DateTimeFormat(pattern = "MM-dd-yyyy")
     private String dateOfBirth;
     @JsonIgnore
     private ArrayList<Promotion> promotions = new ArrayList<>();

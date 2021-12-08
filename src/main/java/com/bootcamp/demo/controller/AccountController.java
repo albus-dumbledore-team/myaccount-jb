@@ -7,9 +7,11 @@ import com.bootcamp.demo.model.Account;
 import com.bootcamp.demo.model.AccountDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
+@Controller
 @CrossOrigin("http://localhost:3000")
 public class AccountController {
     private final AccountService service;
@@ -27,6 +29,18 @@ public class AccountController {
             return ResponseEntity.ok().body(service.add(account));
         } catch (ServiceException exception) {
             return responseHandler.createResponse(exception);
+        }
+    }
+
+    @PostMapping("/createAccount")
+    public String createAccount(@ModelAttribute Account account, Model model) {
+        try {
+            service.add(account);
+            return "register_succes";
+        } catch (ServiceException exception) {
+            model.addAttribute("registerError",true);
+            model.addAttribute("error",exception.getMessage());
+            return "register";
         }
     }
 
@@ -65,6 +79,24 @@ public class AccountController {
             return ResponseEntity.ok(service.retrieve(email));
         } catch (ServiceException exception) {
             return responseHandler.createResponse(exception);
+
+        }
+    }
+
+    @PostMapping("/viewMyAccount")
+    public String viewMyAccount(@ModelAttribute Account acc, Model model) {
+        try {
+            AccountDetails a = service.retrieve(acc.getEmail());
+            model.addAttribute("name", a.getName());
+            model.addAttribute("email", a.getEmail());
+            model.addAttribute("address", a.getAddress());
+            model.addAttribute("phoneNumber", a.getPhoneNumber());
+            model.addAttribute("birthdate", a.getDateOfBirth());
+            return "viewAccount";
+        } catch (ServiceException exception) {
+            model.addAttribute("viewError", true);
+            model.addAttribute("error", "Invalid username");
+            return "viewAccount";
 
         }
     }

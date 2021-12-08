@@ -36,3 +36,15 @@
     transform: rotate(360deg);
   }
 }
+
+.navbar {
+  height: 50px;
+}
+
+.mainDiv {
+  height: 100vh;
+  background-image: url("https://media.istockphoto.com/photos/businessman-riding-a-scooter-in-the-city-picture-id1086958922?k=20&m=1086958922&s=612x612&w=0&h=ug4v2OZHasnnldqoH_DXAYkuxPCnxkI9u7sbbeW8sXo=");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}

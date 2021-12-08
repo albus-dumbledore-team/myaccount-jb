@@ -41,6 +41,11 @@ public class AccountService {
 
     public String add(final Account account) throws ServiceException {
         try {
+            String date =account.getDateOfBirth().substring(5);
+            date += "-";
+            date += account.getDateOfBirth().substring(0, 4);
+            account.setDateOfBirth(date);
+
             account.setPassword(encryptor.encryptSHA256(account.getPassword()));
             ValidationResponse accountValidation = this.accountValidation.validate(account);
             if (accountValidation.getIsValid()) {

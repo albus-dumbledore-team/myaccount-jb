@@ -95,7 +95,7 @@ export default class CreateAccount extends Component {
       password: "",
       phoneNumber: "",
       address: "",
-      dateOfBirth: new Date(),
+      dateOfBirth: false,
       successful: false,
       message: ""
     };
@@ -191,68 +191,72 @@ export default class CreateAccount extends Component {
             {!this.state.successful && (
               <div>
                 <div className="form-group">
-                  <label htmlFor="name">Name:</label>
                   <Input
                     type="text"
-                    className="form-control"
+                    className="inputField"
                     name="name"
                     value={this.state.name}
                     onChange={this.onChangeName}
                     validations={[required, vname]}
+                    placeholder="Full name"
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="email">Email:</label>
                   <Input
                     type="text"
-                    className="form-control"
+                    className="inputField"
                     name="email"
                     value={this.state.email}
                     onChange={this.onChangeEmail}
                     validations={[required, vemail]}
+                    placeholder="Email address"
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="password">Password:</label>
                   <Input
                     type="password"
-                    className="form-control"
+                    className="inputField"
                     name="password"
                     value={this.state.password}
                     onChange={this.onChangePassword}
                     validations={[required, vpassword]}
+                    placeholder="Password"
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="phoneNumber">Phone number:</label>
                   <Input
                     type="text"
-                    className="form-control"
+                    className="inputField"
                     name="phoneNumber"
                     value={this.state.phoneNumber}
                     onChange={this.onChangePhoneNumber}
                     validations={[required, vphonenumber]}
+                    placeholder="Phone number"
                   />
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="address">Address:</label>
                   <Input
                     type="text"
-                    className="form-control"
+                    className="inputField"
                     name="address"
                     value={this.state.address}
                     onChange={this.onChangeAddress}
                     validations={[required, vaddress]}
+                    placeholder="Address"
                   />
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="datePicker">Birthdate:</label>
-                    <DatePicker selected={this.state.dateOfBirth} onChange={(newDate) => this.setState({dateOfBirth: newDate})} />
+                    <DatePicker 
+                      className="inputField"
+                      selected={this.state.dateOfBirth} 
+                      onChange={(newDate) => this.setState({dateOfBirth: newDate})} 
+                      placeholderText="Birthdate"
+                    />
                 </div>
 
                 <div className="form-group-btn">
