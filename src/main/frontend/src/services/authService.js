@@ -11,8 +11,8 @@ let config = {
 
 class AuthService {
 
-  viewAccount(username){
-    return axios.get(API_URL+"viewAccount/"+username);
+  viewAccount(email){
+    return axios.get(API_URL+"viewAccount/"+email);
   }
 
   logout() {
