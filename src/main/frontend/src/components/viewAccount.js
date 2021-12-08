@@ -19,6 +19,7 @@ export default class ViewAccount extends React.Component {
             phoneNumber: "",
             address: "",
             dateOfBirth: "",
+            message: ""
         };
     }
 
@@ -32,27 +33,35 @@ export default class ViewAccount extends React.Component {
 
     handleRegister(e) {
         e.preventDefault();
-        AuthService.viewAccount(
-            this.state.username,
-        ).then(response =>{
-            this.setState({
-                name: response.data.name,
-                username: response.data.username,
-                email: response.data.email,
-                phoneNumber: response.data.phoneNumber,
-                address: response.data.address,
-                dateOfBirth: response.data.dateOfBirth,
-            })
-        },
-        error => {
-            console.log("Account not found");
-            console.log(error);
-            return (
-                <div className="alert alert-danger" role="alert">
-                    Account not found
-                </div>
-            );
-        });
+        this.setState({
+            name: "",
+            username: "",
+            email: "",
+            phoneNumber: "",
+            address: "",
+            dateOfBirth: "",
+            message: ""
+        })
+        if(this.state.username!="") {
+            AuthService.viewAccount(
+                this.state.username,
+            ).then(response => {
+                this.setState({
+                    name: response.data.name,
+                    username: response.data.username,
+                    email: response.data.email,
+                    phoneNumber: response.data.phoneNumber,
+                    address: response.data.address,
+                    dateOfBirth: response.data.dateOfBirth,
+                })
+            }).catch(
+                error => {
+                    console.log("Account not found");
+                    this.setState({
+                        message: error.response.data
+                    })
+                });
+        }
     };
 
     render() {
@@ -80,6 +89,14 @@ export default class ViewAccount extends React.Component {
                                     />
                                 </div>
 
+                                {this.state.message && (
+                                    <div className="form-group">
+                                        <div role="alert">
+                                            {this.state.message}
+                                        </div>
+                                    </div>
+                                )}
+
                                 <div className="form-group-btn">
                                     <button className="btnViewAccount btn-primary btn-block">View account</button>
                                 </div>
@@ -99,8 +116,10 @@ export default class ViewAccount extends React.Component {
                                 <div className="form-group">
                                     <label htmlFor="datePicker">Birthdate: {this.state.dateOfBirth}</label>
                                 </div>
+
                             </div>
                         )}
+
                     </Form>
                 </div>
             </div>
