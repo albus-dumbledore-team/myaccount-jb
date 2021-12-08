@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>View account page</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <!-- Custom styles for this template -->
+    <link href="../public/viewAccount.css" rel="stylesheet">
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+</head>
+<body class="text-center">
+<nav class="navbar navbar-expand navbar-dark bg-dark">>
+    <div class="navbar-nav ml-auto">
+        <ul class="nav navbar-nav">
+            <li><a class="nav-link" th:href="@{/login}">Login</a></li>
+            <li><a class="nav-link" th:href="@{/register}">Register</a></li>
+        </ul>
+    </div>
+</nav>
+<div class="form-signup" id="container">
+    <h2 class="h3 mb-3 fw-normal">View account</h2>
+
+    <!--/*@thymesVar id="account" type="com.bootcamp.demo.model.Account"*/-->
+    <form th:action="@{/viewMyAccount}" th:object="${account}" method="post">
+        <input type="text" id="email" name="email" placeholder="Email" class="form-control" th:field="*{email}" required
+               autofocus>
+        <p th:if="${viewError}" th:text="${error}" class="error"></p>
+
+        <input id="submit" type="submit" class="w-100 btn btn-lg btn-primary" value="View" />
+    </form>
+
+    <div>
+    <label >Name: </label><label th:text="${name}"></label>
+    </div>
+    <div>
+    <label >Email: </label><label th:text="${email}"></label>
+    </div>
+    <div>
+    <label >Address: </label><label th:text="${address}"></label>
+    </div>
+    <div>
+    <label >Phone number: </label><label th:text="${phoneNumber}"></label>
+    </div>
+    <div>
+    <label >Birthdate: </label><label th:text="${birthdate}"></label>
+    </div>
+</div>
+</body>
+</html>

@@ -95,7 +95,7 @@ public class AccountController {
             return "viewAccount";
         } catch (ServiceException exception) {
             model.addAttribute("viewError", true);
-            model.addAttribute("error", "Invalid username");
+            model.addAttribute("error", "Invalid email");
             return "viewAccount";
 
         }

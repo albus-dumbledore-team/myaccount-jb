@@ -1,0 +1,32 @@
+html,
+body {
+    height: 100%;
+}
+
+body {
+    display: block;
+    align-items: center;
+    background-color: #f5f5f5;
+}
+
+.form-signup {
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: auto;
+}
+.form-signup .checkbox {
+    font-weight: 400;
+}
+.form-signup input {
+    margin-bottom: 5px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    border: 0;
+}
+
+.form-signup input[id="datepicker"] {
+    margin-bottom: 10px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}

@@ -65,11 +65,4 @@ public class LoginController {
         model.addAttribute("birthdate", "");
         return "viewAccount";
     }
-
-    @RequestMapping("/viewAccount-error/")
-    public String viewAccountError(Model model) {
-        model.addAttribute("viewError", true);
-        model.addAttribute("error", "Invalid email");
-        return "viewAccount";
-    }
 }
