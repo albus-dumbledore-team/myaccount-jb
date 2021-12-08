@@ -1,9 +1,10 @@
 import React, {Component} from "react";
-import {Routes, Route} from "react-router-dom";
+import {Route, Routes} from "react-router-dom";
 import "./App.css";
 import AuthService from "./services/authService";
-import CreateAccount from "./components/createAccount";
+import CreateAccount from "./components/CreateAccount";
 import ViewAccount from "./components/viewAccount";
+import UpdateAccount from "./components/UpdateAccount";
 
 class App extends Component {
     constructor(props) {
@@ -44,6 +45,7 @@ class App extends Component {
                     <Routes>
                         <Route path="/createAccount" element={<CreateAccount/>}/>
                         <Route path="/myaccount" element={<ViewAccount/>}/>
+                        <Route path="/updateAccount/:email" element={<UpdateAccount/>}/>
                     </Routes>
                 </div>
 
