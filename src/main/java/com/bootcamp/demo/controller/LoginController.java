@@ -54,7 +54,7 @@ public class LoginController {
         return "register";
     }
 
-    @RequestMapping("/viewAccount")
+    @RequestMapping("/viewMyAccount")
     public String viewAccount(Model model) {
         Account account = new Account();
         model.addAttribute("account", account);
