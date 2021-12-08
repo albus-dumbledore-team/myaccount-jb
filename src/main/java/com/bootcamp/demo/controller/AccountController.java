@@ -30,10 +30,10 @@ public class AccountController {
         }
     }
 
-    @DeleteMapping("/deleteAccount/{username}")
-    public ResponseEntity<String> delete(@PathVariable String username) {
+    @DeleteMapping("/deleteAccount/{email}")
+    public ResponseEntity<String> delete(@PathVariable String email) {
         try {
-            service.delete(username);
+            service.delete(email);
             return ResponseEntity.ok().body("Account deleted successfully");
         } catch (ServiceException e) {
             return responseHandler.createResponse(e);
@@ -43,7 +43,7 @@ public class AccountController {
     @PatchMapping("/updatePassword")
     public ResponseEntity<String> updatePassword(@RequestBody UpdatePasswordDTO dto) {
         try {
-            return ResponseEntity.ok().body(service.updatePassword(dto.getUsername(), dto.getOldPassword(), dto.getNewPassword(), dto.getConfirmNewPassword()));
+            return ResponseEntity.ok().body(service.updatePassword(dto.getEmail(), dto.getOldPassword(), dto.getNewPassword(), dto.getConfirmNewPassword()));
         } catch (ServiceException e) {
             return responseHandler.createResponse(e);
         }
@@ -58,11 +58,11 @@ public class AccountController {
         }
     }
 
-    @GetMapping("/viewAccount/{username}")
+    @GetMapping("/viewAccount/{email}")
     @ResponseBody
-    public ResponseEntity viewAccount(@PathVariable String username) {
+    public ResponseEntity viewAccount(@PathVariable String email) {
         try {
-            return ResponseEntity.ok(service.retrieve(username));
+            return ResponseEntity.ok(service.retrieve(email));
         } catch (ServiceException exception) {
             return responseHandler.createResponse(exception);
 
@@ -89,11 +89,11 @@ public class AccountController {
         }
     }
 
-    @GetMapping("/viewAccountPromotions/{username}")
+    @GetMapping("/viewAccountPromotions/{email}")
     @ResponseBody
-    public ResponseEntity viewAccountPromotions(@PathVariable String username) {
+    public ResponseEntity viewAccountPromotions(@PathVariable String email) {
         try {
-            return ResponseEntity.ok(service.getAccountPromotions(username));
+            return ResponseEntity.ok(service.getAccountPromotions(email));
         } catch (ServiceException exception) {
             return responseHandler.createResponse(exception);
         }

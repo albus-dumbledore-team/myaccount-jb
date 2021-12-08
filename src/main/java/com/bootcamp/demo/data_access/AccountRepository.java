@@ -8,7 +8,6 @@ import com.google.firebase.cloud.FirestoreClient;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,15 +19,15 @@ public class AccountRepository {
     private final String accountsPath = "accounts";
 
     public String add(Account account) throws ExecutionException, InterruptedException {
-        //checks if an account with the same username doesn't already exists and adds the new account
+        //checks if an account with the same email doesn't already exists and adds the new account
         Firestore db = FirestoreClient.getFirestore();
-        DocumentReference docRef = getAccountsCollection().document(account.getUsername());
+        DocumentReference docRef = getAccountsCollection().document(account.getEmail());
 
         //use transaction to make the operation atomic
         ApiFuture<String> futureTransaction = db.runTransaction(transaction -> {
             DocumentSnapshot snapshot = transaction.get(docRef).get();
             if (snapshot.exists()) {
-                throw new Exception(String.format("An account with the same username {%s} already exists!", snapshot.getId()));
+                throw new Exception(String.format("An account with the same email {%s} already exists!", snapshot.getId()));
             } else {
                 Transaction writeResult = transaction.set(docRef, account);
                 return "Account created successfully";
@@ -38,8 +37,8 @@ public class AccountRepository {
     }
 
 
-    public Optional<Account> retrieve(String username) throws ExecutionException, InterruptedException {
-        DocumentReference documentReference = getAccountsCollection().document(username);
+    public Optional<Account> retrieve(String email) throws ExecutionException, InterruptedException {
+        DocumentReference documentReference = getAccountsCollection().document(email);
         ApiFuture<DocumentSnapshot> future = documentReference.get();
         DocumentSnapshot documentSnapshot = future.get();
         if (documentSnapshot.exists())
@@ -54,7 +53,7 @@ public class AccountRepository {
 
     public void update(Account account) throws ExecutionException, InterruptedException, Exception {
         CollectionReference collectionReference = this.getAccountsCollection();
-        DocumentReference documentReference = collectionReference.document(account.getUsername());
+        DocumentReference documentReference = collectionReference.document(account.getEmail());
         if (documentReference.get().get().exists()) {
             documentReference.set(account);
         } else {
@@ -63,11 +62,11 @@ public class AccountRepository {
     }
 
 
-    public void delete(String username) throws ExecutionException, InterruptedException, IllegalArgumentException {
-        if (username == null) {
-            throw new IllegalArgumentException("Username must not be null.");
+    public void delete(String email) throws ExecutionException, InterruptedException, IllegalArgumentException {
+        if (email == null) {
+            throw new IllegalArgumentException("email must not be null.");
         }
-        DocumentReference documentReference = getAccountsCollection().document(username);
+        DocumentReference documentReference = getAccountsCollection().document(email);
         if (!documentReference.get().get().exists()) {
             throw new IllegalArgumentException("Account not found");
         }
@@ -75,8 +74,8 @@ public class AccountRepository {
     }
 
 
-    public String updatePassword(String username, String oldPassword, String newPassword) throws Exception {
-        DocumentReference documentReference = getAccountsCollection().document(username);
+    public String updatePassword(String email, String oldPassword, String newPassword) throws Exception {
+        DocumentReference documentReference = getAccountsCollection().document(email);
         ApiFuture<DocumentSnapshot> future = documentReference.get();
         DocumentSnapshot documentSnapshot = future.get();
 
@@ -110,6 +109,5 @@ public class AccountRepository {
             throw new IllegalArgumentException("Account does not exist");
         }
         ApiFuture<WriteResult> union = accountReference.update("promotions", FieldValue.arrayUnion(promotion));
-        System.out.println(union.get().toString());
     }
 }
