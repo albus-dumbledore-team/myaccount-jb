@@ -8,7 +8,6 @@ import java.util.List;
 public class Account {
     private String name;
     private String email;
-    private String username;
     private String password;
     private String phoneNumber;
     private String address;
@@ -16,10 +15,9 @@ public class Account {
     @JsonIgnore
     private ArrayList<Promotion> promotions = new ArrayList<>();
 
-    public Account(String name, String email, String username, String password, String phoneNumber, String address, String dateOfBirth) {
+    public Account(String name, String email, String password, String phoneNumber, String address, String dateOfBirth) {
         this.name = name;
         this.email = email;
-        this.username = username;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.address = address;
@@ -44,14 +42,6 @@ public class Account {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {

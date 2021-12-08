@@ -3,13 +3,11 @@ package com.bootcamp.demo.business;
 import com.bootcamp.demo.data_access.AccountRepository;
 import com.bootcamp.demo.data_access.PromotionRepository;
 import com.bootcamp.demo.exception.ServiceException;
-import com.bootcamp.demo.data_access.AbstractRepository;
 import com.bootcamp.demo.model.Account;
 import com.bootcamp.demo.model.AccountDetails;
 import com.bootcamp.demo.model.Promotion;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import java.util.Objects;
@@ -55,9 +53,9 @@ public class AccountService {
         }
     }
 
-    public void delete(String username) throws ServiceException {
+    public void delete(String email) throws ServiceException {
         try {
-            repository.delete(username);
+            repository.delete(email);
 
         } catch (ExecutionException | InterruptedException e) {
             throw new ServiceException(ErrorCode.INTERNAL, e.getMessage());
@@ -67,9 +65,9 @@ public class AccountService {
     }
 
 
-    public AccountDetails retrieve(String username) throws ServiceException {
+    public AccountDetails retrieve(String email) throws ServiceException {
         try {
-            Optional<Account> account = repository.retrieve(username);
+            Optional<Account> account = repository.retrieve(email);
             if (account.isPresent()) {
                 return createAccountDetails(account.get());
             }
@@ -80,7 +78,7 @@ public class AccountService {
     }
 
 
-    public String updatePassword(String username, String oldPassword, String newPassword, String confirmNewPassword) throws ServiceException {
+    public String updatePassword(String email, String oldPassword, String newPassword, String confirmNewPassword) throws ServiceException {
 
         if (!newPassword.equals(confirmNewPassword)) {
             throw new ServiceException(ErrorCode.VALIDATION, "New password and Confirm new password field do not match");
@@ -89,7 +87,7 @@ public class AccountService {
         String newPasswd = encryptor.encryptSHA256(newPassword);
 
         try {
-            return repository.updatePassword(username, oldPassword, newPasswd);
+            return repository.updatePassword(email, oldPassword, newPasswd);
         } catch (Exception e) {
             throw new ServiceException(ErrorCode.VALIDATION, e.getMessage());
         }
@@ -104,7 +102,7 @@ public class AccountService {
     }
 
     private AccountDetails createAccountDetails(final Account account) {
-        return new AccountDetails(account.getName(), account.getEmail(), account.getUsername()
+        return new AccountDetails(account.getName(), account.getEmail()
                 , account.getPhoneNumber(), account.getAddress(), account.getDateOfBirth());
     }
 
@@ -113,7 +111,7 @@ public class AccountService {
      */
     public Account transformAccount(AccountDetails accountDetails) throws ServiceException {
         try {
-            Optional<Account> account = repository.retrieve(accountDetails.getUsername());
+            Optional<Account> account = repository.retrieve(accountDetails.getEmail());
             if (account.isEmpty()) {
                 throw new ServiceException(ErrorCode.VALIDATION, "Account does not exist!");
             }
