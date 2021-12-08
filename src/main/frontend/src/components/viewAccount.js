@@ -14,7 +14,6 @@ export default class ViewAccount extends React.Component {
 
         this.state = {
             name: "",
-            username: "",
             email: "",
             phoneNumber: "",
             address: "",
@@ -24,7 +23,7 @@ export default class ViewAccount extends React.Component {
     }
 
     onChange(ev) {
-        this.setState({username: ev.target.value})
+        this.setState({email: ev.target.value})
     }
 
     onSubmitName(ev) {
@@ -42,13 +41,12 @@ export default class ViewAccount extends React.Component {
             dateOfBirth: "",
             message: ""
         })
-        if(this.state.username!="") {
+        if(this.state.email!="") {
             AuthService.viewAccount(
-                this.state.username,
+                this.state.email,
             ).then(response => {
                 this.setState({
                     name: response.data.name,
-                    username: response.data.username,
                     email: response.data.email,
                     phoneNumber: response.data.phoneNumber,
                     address: response.data.address,
@@ -79,12 +77,12 @@ export default class ViewAccount extends React.Component {
                         {(
                             <div>
                                 <div className="form-group">
-                                    <label htmlFor="username">Username:</label>
+                                    <label htmlFor="email">Email:</label>
                                     <Input
                                         type="text"
                                         className="form-control"
-                                        username="username"
-                                        value={this.state.username}
+                                        email="email"
+                                        value={this.state.email}
                                         onChange={this.onChange}
                                     />
                                 </div>
@@ -103,10 +101,6 @@ export default class ViewAccount extends React.Component {
 
                                 <div className="form-group">
                                     <label htmlFor="name">Name: {this.state.name}</label>
-                                </div>
-
-                                <div className="form-group">
-                                    <label htmlFor="email">Email: {this.state.email}</label>
                                 </div>
 
                                 <div className="form-group">
