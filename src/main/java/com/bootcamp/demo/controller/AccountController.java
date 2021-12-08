@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin("http://localhost:3000")
 public class AccountController {
     private final AccountService service;
 
@@ -58,8 +59,8 @@ public class AccountController {
         }
     }
 
-    @PostMapping("/getAll")
-    public ResponseEntity getAll() {
+    @GetMapping("/getAll")
+    ResponseEntity getAll() {
         try {
             return ResponseEntity.ok().body(service.getAll());
         } catch (ServiceException exception) {
