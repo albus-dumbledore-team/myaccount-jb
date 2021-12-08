@@ -19,7 +19,7 @@ class AuthService {
     localStorage.removeItem("user");
   }
 
-  register(name, username, email, password, phoneNumber, address, dateOfBirth) {
+  register(name, email, password, phoneNumber, address, dateOfBirth) {
     console.log("calling /addAccount");
     let date = ((dateOfBirth.getMonth() > 8) ?
         (dateOfBirth.getMonth() + 1) : ('0' + (dateOfBirth.getMonth() + 1)))
@@ -32,7 +32,6 @@ class AuthService {
     let data = {
       "name": name,
       "email": email,
-      "username": username,
       "password": password,
       "phoneNumber": phoneNumber,
       "address": address,

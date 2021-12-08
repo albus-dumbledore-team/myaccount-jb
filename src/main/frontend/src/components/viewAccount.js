@@ -34,7 +34,6 @@ export default class ViewAccount extends React.Component {
         e.preventDefault();
         this.setState({
             name: "",
-            username: "",
             email: "",
             phoneNumber: "",
             address: "",
