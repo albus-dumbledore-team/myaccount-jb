@@ -102,7 +102,6 @@ public class AccountValidation {
         this.validationResponse = new ValidationResponse();
 
         nameValidator(account.getName());
-        usernameValidator(account.getUsername());
         emailValidator(account.getEmail());
         passwordValidator(account.getPassword());
         phoneNumberValidator(account.getPhoneNumber());

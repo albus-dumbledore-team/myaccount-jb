@@ -3,7 +3,8 @@ import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {required, vaddress, vpassword, vusername, vname, vphonenumber} from "./utils";
+import {required, vaddress, vpassword, vemail, vname, vphonenumber} from "./utils";
+import CheckButton from "react-validation/build/button";
 
 import AuthService from "../services/authService";
 import "../styles/createAccount.css"
@@ -12,7 +13,6 @@ export default class CreateAccount extends Component {
   constructor(props) {
     super(props);
     this.handleRegister = this.handleRegister.bind(this);
-    this.onChangeUsername = this.onChangeUsername.bind(this);
     this.onChangeName = this.onChangeName.bind(this);
     this.onChangeEmail = this.onChangeEmail.bind(this);
     this.onChangePassword = this.onChangePassword.bind(this);
@@ -36,12 +36,6 @@ export default class CreateAccount extends Component {
   onChangeName(e) {
     this.setState({
       name: e.target.value
-    });
-  }
-
-  onChangeUsername(e) {
-    this.setState({
-      username: e.target.value
     });
   }
 
@@ -81,16 +75,14 @@ export default class CreateAccount extends Component {
 
     this.setState({
       message: '',
-      successful: false
+      successful: false,
     });
 
     this.form.validateAll();
-    console.log(this.state.dateOfBirth.toLocaleDateString("en-US"));
     console.log("message length", this.state.message.length);
-
+    if (this.checkBtn.context._errors.length === 0)
       AuthService.register(
         this.state.name,
-        this.state.username,
         this.state.email,
         this.state.password,
         this.state.phoneNumber,
@@ -143,18 +135,6 @@ export default class CreateAccount extends Component {
                 </div>
 
                 <div className="form-group">
-                  <label htmlFor="username">Username:</label>
-                  <Input
-                    type="text"
-                    className="form-control"
-                    name="username"
-                    value={this.state.username}
-                    onChange={this.onChangeUsername}
-                    validations={[required, vusername]}
-                  />
-                </div>
-
-                <div className="form-group">
                   <label htmlFor="email">Email:</label>
                   <Input
                     type="text"
@@ -162,7 +142,7 @@ export default class CreateAccount extends Component {
                     name="email"
                     value={this.state.email}
                     onChange={this.onChangeEmail}
-                    validations={[required]}
+                    validations={[required, vemail]}
                   />
                 </div>
 
@@ -228,6 +208,12 @@ export default class CreateAccount extends Component {
                 </div>
               </div>
             )}
+            <CheckButton
+              style={{ display: "none" }}
+              ref={c => {
+                this.checkBtn = c;
+              }}
+            />
           </Form>
         </div>
       </div>

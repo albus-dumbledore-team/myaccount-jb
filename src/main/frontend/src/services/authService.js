@@ -24,19 +24,18 @@ function formatDate(date) {
 
 class AuthService {
 
-    viewAccount(username) {
-        return API.get("viewAccount/" + username, {
+    viewAccount(email) {
+        return API.get("viewAccount/" + email, {
             headers: {
                 "Access-Control-Allow-Origin": "http://localhost:3000"
             }
         });
     }
 
-    updateAccount(oldUsername, {name, email, phoneNumber, address, dateOfBirth}) {
+    updateAccount(email, {name, phoneNumber, address, dateOfBirth}) {
         let data = {
             "name": name,
             "email": email,
-            "username": oldUsername,
             "phoneNumber": phoneNumber,
             "address": address,
             "dateOfBirth": formatDate(dateOfBirth),
@@ -48,30 +47,23 @@ class AuthService {
         localStorage.removeItem("user");
     }
 
-    register(name, username, email, password, phoneNumber, address, dateOfBirth) {
+    register(name, email, password, phoneNumber, address, dateOfBirth) {
         console.log("calling /addAccount");
         let date = formatDate(dateOfBirth);
         console.log(date);
         let data = {
             "name": name,
             "email": email,
-            "username": username,
             "password": password,
             "phoneNumber": phoneNumber,
             "address": address,
             "dateOfBirth": date,
         }
         return axios.post(API_URL + "addAccount", data, config);
-        // .catch(error => {
-        //   console.error(error);
-        //   console.log(error.response.data)
-        //   return error.response;
-        // });
     }
 
     getCurrentUser() {
         return JSON.parse(localStorage.getItem('user'));
-        ;
     }
 }
 

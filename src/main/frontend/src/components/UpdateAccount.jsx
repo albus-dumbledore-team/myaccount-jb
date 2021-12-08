@@ -14,8 +14,6 @@ class UpdateAccount extends React.Component {
 
         this.state = {
             name: "",
-            username: "",
-            email: "",
             phoneNumber: "",
             address: "",
             dateOfBirth: new Date(),
@@ -26,7 +24,7 @@ class UpdateAccount extends React.Component {
 
     async componentDidMount() {
         console.log(this.props);
-        const account = await AuthService.viewAccount(this.props.username);
+        const account = await AuthService.viewAccount(this.props.email);
         console.log({account})
         this.setState({...account.data, dateOfBirth: new Date(account.data.dateOfBirth)});
     }
@@ -37,17 +35,12 @@ class UpdateAccount extends React.Component {
         });
     }
 
-    onChangeUsername = (e) => {
-        this.setState({
-            username: e.target.value
-        });
-    }
 
-    onChangeEmail = (e) => {
-        this.setState({
-            email: e.target.value
-        });
-    }
+    // onChangeEmail = (e) => {
+    //     this.setState({
+    //         email: e.target.value
+    //     });
+    // }
 
     onChangePhoneNumber = (e) => {
         this.setState({
@@ -61,26 +54,18 @@ class UpdateAccount extends React.Component {
         });
     }
 
-    onChangeDateOfBirth = (e) => {
-        this.setState({
-            dateOfBirth: e
-        });
-    }
-
     handleUpdate = (e) => {
         e.preventDefault();
         const {
             name,
-            email,
             phoneNumber,
             address,
             dateOfBirth
         } = this.state;
         AuthService.updateAccount(
-            this.props.username,
+            this.props.email,
             {
                 name,
-                email,
                 phoneNumber,
                 address,
                 dateOfBirth
@@ -126,29 +111,18 @@ class UpdateAccount extends React.Component {
                                     />
                                 </div>
 
+
                                 {/*<div className="form-group">*/}
-                                {/*    <label htmlFor="username">Username:</label>*/}
+                                {/*    <label htmlFor="email">Email:</label>*/}
                                 {/*    <Input*/}
                                 {/*        type="text"*/}
                                 {/*        className="form-control"*/}
-                                {/*        name="username"*/}
-                                {/*        value={this.state.username}*/}
-                                {/*        onChange={this.onChangeUsername}*/}
-                                {/*        validations={[required, vusername]}*/}
+                                {/*        name="email"*/}
+                                {/*        value={this.state.email}*/}
+                                {/*        onChange={this.onChangeEmail}*/}
+                                {/*        validations={[required]}*/}
                                 {/*    />*/}
                                 {/*</div>*/}
-
-                                <div className="form-group">
-                                    <label htmlFor="email">Email:</label>
-                                    <Input
-                                        type="text"
-                                        className="form-control"
-                                        name="email"
-                                        value={this.state.email}
-                                        onChange={this.onChangeEmail}
-                                        validations={[required]}
-                                    />
-                                </div>
 
                                 <div className="form-group">
                                     <label htmlFor="phoneNumber">Phone number:</label>
@@ -209,6 +183,6 @@ class UpdateAccount extends React.Component {
 }
 
 export default function () {
-    const {username} = useParams()
-    return <UpdateAccount username={username}/>
+    const {email} = useParams()
+    return <UpdateAccount email={email}/>
 };
